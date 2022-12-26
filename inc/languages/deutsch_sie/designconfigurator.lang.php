@@ -10,24 +10,24 @@ $l['designconfigurator_accentcolor_desc'] = "Trage hier eine für dich individue
 $l['designconfigurator_accentcolor_def'] = "Standard-Aktzenfarbe Nr.";
 $l['designconfigurator_accentcolor_button'] = "Aktzenfarbe speichern";
 $l['designconfigurator_accentcolors_button'] = "Aktzenfarben speichern";
-$l['designconfigurator_accentcolor_none'] = "Für das von dir aktuelle ausgewählte Design gibt es nicht die Möglichkeit eine oder mehre indiviuelle Design-Aktzentfarben festzulegen.";
+$l['designconfigurator_accentcolor_none'] = "Für das von dir aktuell ausgewählte Design gibt es nicht die Möglichkeit eine oder mehrere individuelle Design-Aktzentfarben festzulegen.";
 $l['designconfigurator_accentcolor_own_number'] = "Eigene Aktzenfarbe Nr.";
 $l['designconfigurator_lightdarkmode_none_light'] = "Lightmodus";
 $l['designconfigurator_lightdarkmode_none_dark'] = "Darkmodus";
-$l['designconfigurator_designswitch_none'] = "Für das von dir aktuell ausgewählte Design gibt es keine verschiedenen Header-/Farbkombination!";
-$l['designconfigurator_lightdarkmode_none_mode'] = "Für das von dir aktuell ausgewählte Design gibt es nicht die Option zwischen einem Light- oder Darkmodus zu wechseln! <br>Vom Team wird ein <b>{1} Design</b> angeboten.";
-$l['designconfigurator_lightdarkmode_none'] = "Für das von dir aktuell ausgewählte Design gibt es nicht die Option zwischen einem Light- oder Darkmodus zu wechseln!";
-$l['switcher_lightdarkbutton_light'] = "Lightmode aktivieren";
-$l['switcher_lightdarkbutton_dark'] = "Darkmode aktivieren";
+$l['designconfigurator_designswitch_none'] = "Für das von dir aktuell ausgewählte Design gibt es keine verschiedenen Header-/Farbkombinationen!";
+$l['designconfigurator_lightdarkmode_none_mode'] = "Für das von dir aktuell ausgewählte Design gibt es nicht die Option zwischen einem Light- und Darkmodus zu wechseln! <br>Vom Team wird ein <b>{1} Design</b> angeboten.";
+$l['designconfigurator_lightdarkmode_none'] = "Für das von dir aktuell ausgewählte Design gibt es nicht die Option zwischen einem Light- und Darkmodus zu wechseln!";
+$l['switcher_lightdarkbutton_light'] = "Lightmodus aktivieren";
+$l['switcher_lightdarkbutton_dark'] = "Darkmodus aktivieren";
 $l['designconfigurator_lightdark_link_light'] = "<i class=\"fa-solid fa-sun\"></i> Lightmodus";
 $l['designconfigurator_lightdark_link_dark'] = "<i class=\"fa-solid fa-moon\"></i> Darkmodus";
 $l['designconfigurator_lightdark_info_light'] = "<i class=\"fa-solid fa-sun\"></i> Light";
 $l['designconfigurator_lightdark_info_dark'] = "<i class=\"fa-solid fa-moon\"></i> Dark";
-$l['designconfigurator_redirect_designswitch'] = "Du hast erfolgreich eine neue Farb-/Headerkombination für dich festgelegt. Du wirst nun auf die Design Konfigurationsseite zurückgeleitet!";
-$l['designconfigurator_redirect_designdimm'] = "Du hast erfolgreich dein Helligkeitsmodus festgelegt. Du wirst nun auf die Design Konfigurationsseite zurückgeleitet!";
-$l['designconfigurator_redirect_accentcolor'] = "Du hast erfolgreich deine individuellen Anpassungen gespeichert. Du wirst nun auf die Design Konfigurationsseite zurückgeleitet!";
-$l['designconfigurator_online_location'] = "Passt sich gerade im User-CP das <a href=\"usercp.php?action=designconfigurator\">Design</a> an.";
+$l['designconfigurator_redirect_designswitch'] = "Du hast erfolgreich eine neue Farb-/Headerkombination für dich festgelegt. Du wirst nun auf die Design-Konfigurationsseite zurückgeleitet!";
+$l['designconfigurator_redirect_designdimm'] = "Du hast erfolgreich deinen Helligkeitsmodus festgelegt. Du wirst nun auf die Design-Konfigurationsseite zurückgeleitet!";
+$l['designconfigurator_redirect_accentcolor'] = "Du hast erfolgreich deine individuellen Anpassungen gespeichert. Du wirst nun auf die Design-Konfigurationsseite zurückgeleitet!";
+$l['designconfigurator_online_location'] = "Passt gerade im User-CP das <a href=\"usercp.php?action=designconfigurator\">persönliche Design</a> an.";
 
-$l['designconfigurator_newDesign'] = "Für das Design <b>{3}</b> gibt es eine neue Farb-/Header Kombination.";
-$l['myalerts_setting_designconfigurator_newDesign'] = "Benachrichtigung erhalten, wenn eine neue Farb-/Headervariante hinzugefügt wird?";
+$l['designconfigurator_newDesign'] = "Für das Design <b>{3}</b> gibt es eine neue Farb-/Headerkombination.";
+$l['myalerts_setting_designconfigurator_newDesign'] = "Benachrichtigung erhalten, wenn eine neue Farb-/Headerkombination hinzugefügt wird?";
 ?>
