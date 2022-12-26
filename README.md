@@ -1,8 +1,14 @@
 # Design-Konfigurator
 Mit diesem Plugin lassen sich über das AdminCP verschiedene Designoptionen per Root Verzeichnis festlegen. Unter anderem Light-/Darkmodes, Designs mit Aktzentfarben, welche die User individuell anpassen können und verschiedene Farb-/Headervarianten. Die User können dann auf einer extra Seite sich ihre Wunschvariante selbstaussuchen.
 
+# Designs mit verschiedene Farb- und Headervarianten
+
+# Designs mit einen Light-/Darkmodus
+
+# Designs mit individuellen Design-Akzentfarben
+
 # Vorraussetzungen
-Eine ganz klare Vorraussetzung für dieses Plugin sind Designs mit einem Root-Verzeichnis. Es müssen nicht zwangsläufig all eure Designs so erstellt worden sein, aber die Designs, welche ihr über das Plugin steuern möchtet. Für Root-Verzeichnisse gibt es im Netz etliche Tutorials. Ich habe euch das Tutorial von White_Rabbit (Tom) verlinkt - <a href="https://epic.quodvide.de/showthread.php?tid=124">EPIC</a> || <a href="https://storming-gates.de/showthread.php?tid=1012727">SG</a>.<br>
+Eine ganz klare Vorraussetzung für dieses Plugin sind Designs mit einem Root-Verzeichnis. Es müssen nicht zwangsläufig all eure Designs so erstellt worden sein, aber die Designs, welche ihr über das Plugin steuern möchtet. Für Root-Verzeichnisse gibt es im Netz etliche Tutorials. Ich habe euch das Tutorial von White_Rabbit (Tom) verlinkt - (<a href="https://epic.quodvide.de/showthread.php?tid=124">EPIC</a> || <a href="https://storming-gates.de/showthread.php?tid=1012727">SG</a>)<br>
 <br>
 Damit die Admins im ACP die neue Seite sehen können müssen die Administrator-Berechtigungen angepasst werden. Dafür geht ihr im ACP auf den Reiter Benutzer & Gruppen und klickt links im Menü Administrator-Berechtigungen an. Dort geht ihr auf den Reiter Benutzergruppen-Berechtigungen und klickt bei der entsprechenden Gruppe auf Optionen und dann auf Berechtigungen ändern. Dort wählt ihr den Reiter Templates & Style aus und stellt bei "Kann den Inhalt des Design Konfigurator verwalten?" auf ja. So kann diese Gruppe nun auf den Design Konfigurator zugreifen.
 
@@ -61,6 +67,9 @@ Wird automatisch in jedes bestehende und neue Design hinzugefügt. Man sollte es
 - euerforum.de/admin/index.php?module=style-designconfigurator&action=edit_accentcolor&did=X
 <b>USER-CP</b>
 - euerforum.de/usercp.php?action=designconfigurator
+
+# Dark-/Lightbutton auf dem Index
+Damit man nicht jedes mal die User-CP Seite aufrufen muss und die Helligkeitsvariante vom Design zu wechseln habe ich noch ein Button programmiert, welcher global einsetzbar ist. Standardmäßig wird die Variable für den Button im Footer Template hinter den Stylechanger gelegt. Da die Variable aber global ist könnt ihr diese über all einfügen. Ihr solltet nur beachten, dass Gäste und User den beide sehen können. Da die Einstellung
 
 # Disclaimer
 Der Javascript-Code für den Gäste Dark-/Lightbutton auf dem Index stammt aus diesem Tutorial (<a href="https://storming-gates.de/showthread.php?tid=1012199">SG Thema</a> || <a href="https://epic.quodvide.de/showthread.php?tid=74">EPIC Thema</a>) und wurde nur entsprechend angepasst.
