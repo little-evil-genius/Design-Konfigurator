@@ -1,15 +1,33 @@
-# Design-Konfigurator
-Mit diesem Plugin lassen sich über das AdminCP verschiedene Designoptionen per Root Verzeichnis festlegen. Unter anderem Light-/Darkmodes, Designs mit Aktzentfarben, welche die User individuell anpassen können und verschiedene Farb-/Headervarianten. Die User können dann auf einer extra Seite sich ihre Wunschvariante selbstaussuchen.
+# Design Konfigurator
+Mit diesem Plugin lassen sich über das Admin-CP verschiedene Designoptionen per Custom properties (CSS-Variablen) festlegen. Unter anderem Light-/Darkmodes, Designs mit Aktzentfarben, welche die User individuell anpassen können und verschiedene Farb-/Headervarianten. Die User können dann auf einer extra Seite sich ihre Wunschvariante selbstaussuchen.
 
 # Designs mit verschiedene Farb- und Headervarianten
-Man hat ein hübsches Hauptdesign und hat noch mehre verschiedene Header, aber hat keine Lust oder Kreativität für ein komplet neues Design? In den meisten Fällen wird das Hauptdesign dupliziert und mit den neuen Grafiken und Farben ausgestattet. Das duplizieren kann man sich mit dem Plugin sparen. 
+Wer kennt es nicht, man hat ein Haufen Header aber keine Lust oder Ideen für ein komplett neues Design? Sowieso mag man das aktuelle Design vom Code her sehr? Also dupliziert man das Design und tauschte die Grafiken und Farben aus? Mit dem Design Konfigurator muss man keine Designs mehr duplizieren, sondern kann im ACP ganz einfach eine neue Farb-/Headervariante erstellen für ein bestimmtes Design. Wichtig dafür ist, dass die Farben und alles was sich je nach Farb-/Headervariante verändern soll mit sogenanneten Custom properties (CSS-Variablen) definiert wurden. Denn für jede neue Farb-/Headervariante definieren wir neue Werte für diese Variabeln.<br><br>
+
+<b>Neue Farb- und Headervariante hinzufügen:</b><br>
+Wenn ihr eine neue Variante hinzufügen wollt wird euch eine etwas länger Maske zum ausfüllen angezeigt. Hier erkläre ich euch einmal für was die einzelnen Felder gebraucht werden.<br><br>
+
+<b>Designname</b> - Hier könnt ihr euch ein Namen für die Farbvariante überlegen. Es ist komplett frei was ihr dort angebt, es sollten nur keine Leerzeichen oder Sonderzeichen benutzt werden. Der Name taucht nirgends sichtbar für User im Forum auf. Nur im ACP wird er angezeigt und später in der Datenbank gespeichert, wenn ein User sich ein Farb- und Headervariante aussucht.<br><br>
+
+<b>Theme-ID</b> - Hier werden all eure bisherigen erstellten Themes (Designs) angezeigt. Wählt das entsprechende Theme aus, für welches die Farb-/Variante sein soll. <i>Hinweis:</i> Ich hab die Abfrage der Themes so geschrieben, dass wenn das Design schon bei einem Light/Dark Design oder Design mit Aktzentfarben eingetragen ist nicht nochmal ausgewählt werden kann. Also nicht wundern, wenn dort weniger angezeigt wird.<br><br>
+
+<b>Headergrafik & erste/zweite Aktzentfarbe</b> - Diese drei Felder werden für die Auswahl später im User-CP benötigt. Es soll dabei helfen den Usern einen kleinen Eindruck zugeben, wie das Design aussieht. Welche Farben dominieren in dem Design und wie sieht der Header aus.<br><br>
+
+<b>Pfad zu den Bildern</b> - Wir alle kennen die Variable $theme['imgdir']. Hinter dieser Variable ist der Pfad zum Grafikordner versteckt, welchen wir bei den Theme-Eigenschaften angegeben können. Da es vorkommen kann, dass man für eine neue Farb- und Headervariante auch einen anderen Grafikordner ansprechen will, zum Beispiel für Default Avatare oder Kategoriebanner, kann man in diesem Feld für jede Variante einen eigenen Pfad angeben. Wenn das Feld freibleibt, dann wird der Pfad genommen, welcher in den Eigenschaften von dem Design angegeben wurde.<br><br>
+
+<b>Standardmode</b> - Hier wählt man aus, welches Helligkeitsmodus man als Standard haben möchte. Das ist gerade wichtig, wenn man ein Light- und Darkmode für die Variante anbieten möchte. Denn jeder User und jeder Gast, außer es ist was anders eingestellt, wird diesen Modus als erstes sehen. <br><br>
+
+<b>Lightmode & Darkmode</b> - Hier werden endlich die Farben definiert für die Variante. Wenn ihr beide Felder ausfüllt habt ihr für euer Design automatisch eine dunkle und helle Version. Falls ihr nur eine helle (Light) Version anbieten wollt, dann müsst ihr nur das Lightmode Feld ausfüllen. Für eine dunkle (Dark) Version eben das Feld Darkmode. Es muss auf jeden Fall ein Feld ausgefüllt sein.<br><br>
+
+Nachdem ihr all eure Versionen gespeichert habt, werden diese erst nach Themen-ID und dann nach dem Namen sortiert. Ihr könnt die Farb-/Headervorschau sehen, welche Helligkeitsversionen es gibt, die Standard ist Unterstrichen) und wie viele Nutzer welche Variante nutzen.<br>
+Rechts neben den Namen seht ihr blaue Pfeile. Diese kennen wir schon von den Themes und auch hier haben sie genau die selbe Funktion. Über diese Pfeile kann man eine Standardvariante auswählen. Diese wird Usern und auch Gästen als erstes angezeigt, wenn sie das entsprechende Design unten im Stylechanger auswählen. Solltet ihr mal vergessen eine Variante als Standard zu setzen, dann fängt der Code auch das ab. Dann wird einfach die erste Variante, welche für dieses Design erstellt wurde verwendet.
 
 # Designs mit einen Light-/Darkmodus
 
 # Designs mit individuellen Design-Akzentfarben
 
 # Vorraussetzungen
-Eine ganz klare Vorraussetzung für dieses Plugin sind Designs mit einem Root-Verzeichnis. Es müssen nicht zwangsläufig all eure Designs so erstellt worden sein, aber die Designs, welche ihr über das Plugin steuern möchtet. Für Root-Verzeichnisse gibt es im Netz etliche Tutorials. Ich habe euch das Tutorial von White_Rabbit (Tom) verlinkt - (<a href="https://epic.quodvide.de/showthread.php?tid=124">EPIC</a> || <a href="https://storming-gates.de/showthread.php?tid=1012727">SG</a>)<br>
+Eine ganz klare Vorraussetzung für dieses Plugin sind Designs mit Custom properties (CSS-Variablen). Es müssen nicht zwangsläufig all eure Designs so erstellt worden sein, aber die Designs, welche ihr über das Plugin steuern möchtet. Für Custom properties gibt es im Netz etliche Tutorials. Ich habe euch das Tutorial von White_Rabbit (Tom) einmal mitgebracht - (<a href="https://epic.quodvide.de/showthread.php?tid=124">EPIC</a> || <a href="https://storming-gates.de/showthread.php?tid=1012727">SG</a>)<br>
 <br>
 Damit die Admins im ACP die neue Seite sehen können müssen die Administrator-Berechtigungen angepasst werden. Dafür geht ihr im ACP auf den Reiter Benutzer & Gruppen und klickt links im Menü Administrator-Berechtigungen an. Dort geht ihr auf den Reiter Benutzergruppen-Berechtigungen und klickt bei der entsprechenden Gruppe auf Optionen und dann auf Berechtigungen ändern. Dort wählt ihr den Reiter Templates & Style aus und stellt bei "Kann den Inhalt des Design Konfigurator verwalten?" auf ja. So kann diese Gruppe nun auf den Design Konfigurator zugreifen.
 
@@ -75,7 +93,8 @@ Damit man nicht jedes mal die User-CP Seite aufrufen muss und die Helligkeitsvar
 <b>designconfigurator_switcher_button_member</b>: <br>usercp.php?action=designconfigurator&indexdimm={$activedimm} (das ist der Link, den ihr braucht zum Updaten der Datenbank)
 
 # Disclaimer
-Der Javascript-Code für den Gäste Dark-/Lightbutton auf dem Index stammt aus diesem Tutorial (<a href="https://storming-gates.de/showthread.php?tid=1012199">SG Thema</a> || <a href="https://epic.quodvide.de/showthread.php?tid=74">EPIC Thema</a>) und wurde nur entsprechend angepasst.
+Der Javascript-Code für den Gäste Dark-/Lightbutton auf dem Index stammt aus diesem Tutorial (<a href="https://storming-gates.de/showthread.php?tid=1012199">SG Thema</a> || <a href="https://epic.quodvide.de/showthread.php?tid=74">EPIC Thema</a>) und wurde nur entsprechend angepasst.<br>
+Die Darstellung der Auswahl der Farb-/Headervarianten habe ich mir vom Storming Gates abgeschaut. 
 
 # Demo
 <b>ACP - Farb- und Headervarianten</b>
