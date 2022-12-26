@@ -113,7 +113,7 @@ function designconfigurator_install() {
 	$insert_array = array(
 		'title' => 'designconfigurator_accentcolor',
 		'template' => $db->escape_string('<div class="designconfi-accentcolor">
-        <table>
+        <table width="100%">
            <tbody>
               <form id="designconfigurator_accentcolor" method="post" action="usercp.php?action=designconfigurator_accentcolor">
                  {$accentcolors_add}
