@@ -38,9 +38,9 @@ In der Übersicht der Light-/Darkdesigns wird der Designname, die Theme-ID und d
 # Design Konfiguration im User-CP
 
 # Vorraussetzungen
-Eine ganz klare Vorraussetzung für dieses Plugin sind Designs mit Custom properties (CSS-Variablen). Es müssen nicht zwangsläufig all eure Designs so erstellt worden sein, aber die Designs, welche ihr über das Plugin steuern möchtet. Für Custom properties gibt es im Netz etliche Tutorials. Ich habe euch das Tutorial von White_Rabbit (Tom) einmal mitgebracht - (<a href="https://epic.quodvide.de/showthread.php?tid=124">EPIC</a> || <a href="https://storming-gates.de/showthread.php?tid=1012727">SG</a>)<br>
+Eine ganz klare Vorraussetzung für dieses Plugin sind Designs mit Custom properties (CSS-Variablen). Es müssen nicht zwangsläufig all eure Designs so erstellt worden sein, aber die Designs, welche ihr über das Plugin steuern möchtet. Für Custom properties gibt es im Netz etliche Tutorials und Anleitungen. Ich habe euch das Tutorial von White_Rabbit (Tom) einmal mitgebracht <a href="https://epic.quodvide.de/showthread.php?tid=124">EPIC</a> || <a href="https://storming-gates.de/showthread.php?tid=1012727">SG</a><br>
 <br>
-Damit die Admins im ACP die neue Seite sehen können müssen die Administrator-Berechtigungen angepasst werden. Dafür geht ihr im ACP auf den Reiter Benutzer & Gruppen und klickt links im Menü Administrator-Berechtigungen an. Dort geht ihr auf den Reiter Benutzergruppen-Berechtigungen und klickt bei der entsprechenden Gruppe auf Optionen und dann auf Berechtigungen ändern. Dort wählt ihr den Reiter Templates & Style aus und stellt bei "Kann den Inhalt des Design Konfigurator verwalten?" auf ja. So kann diese Gruppe nun auf den Design Konfigurator zugreifen.
+Damit die Admins im ACP die neue Seite sehen und verwalten können, müssen die Administrator-Berechtigungen angepasst werden. Dafür geht ihr im ACP auf den Reiter Benutzer & Gruppen und klickt links im Menü Administrator-Berechtigungen an. Dort geht ihr auf den Reiter Benutzergruppen-Berechtigungen und klickt bei der entsprechenden Gruppe auf Optionen und dann auf Berechtigungen ändern. Dort wählt ihr den Reiter Templates & Style aus und stellt bei "Kann den Inhalt des Design Konfigurator verwalten?" auf ja. So kann diese Gruppe nun auf den Design Konfigurator zugreifen.
 
 # Datenbank-Änderungen
 hinzugefügte Tabelle:
