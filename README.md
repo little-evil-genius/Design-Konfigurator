@@ -67,21 +67,23 @@ Der Javascript-Code für den Gäste Dark-/Lightbutton auf dem Index stammt aus d
 
 # Demo
 <b>ACP - Farb- und Headervarianten</b>
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-ej-5fc5.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-ek-8ba3.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-el-36ed.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-ej-5fc5.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-ek-8ba3.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-el-36ed.png">
 <br><br>
 <b>ACP - Light-/Darkmodus</b>
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-em-cf1a.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-en-2a3d.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-en-2a3d.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-em-cf1a.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-en-2a3d.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-en-2a3d.png">
 <br><br>
 <b>ACP - Design-Akzentfarbe(n)</b>
 <img src="https://www.bilder-hochladen.net/files/m4bn-es-4b2b.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-et-be21.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-eu-9ce0.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-et-be21.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-eu-9ce0.png">
 <br><br>
 <b>USER-CP</b>
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-er-2864.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-ep-fdf1.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-eq-bdb2.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-er-2864.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-ep-fdf1.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-eq-bdb2.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-ev-6e85.png">
+<img src="https://www.bilder-hochladen.net/files/m4bn-ew-de40.png">
