@@ -95,7 +95,7 @@ function designconfigurator_install() {
                        <div class="designconfi-design">
                           {$designswitch}
                        </div>
-                       <div class="designconfi-headline">{$lang->designconfigurator_usercp_design}</div>
+                       <div class="designconfi-headline">{$lang->designconfigurator_usercp_accentcolors}</div>
                        {$accentcolors}
                     </div>
                  </td>
