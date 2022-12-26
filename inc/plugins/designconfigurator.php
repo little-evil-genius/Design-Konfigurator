@@ -24,7 +24,7 @@ if (class_exists('MybbStuff_MyAlerts_AlertTypeManager')) {
 function designconfigurator_info() {
 	return array(
 		"name" => "Design Konfigurator",
-		"description" => "Mit diesem Plugin lassen sich über das AdminCP verschiedene Designoptionen per Root Verzeichnis festlegen. Unter anderem Light-/Darkmodes, Designs mit Aktzentfarben, welche die User individuell anpassen können und verschiedene Farb-/Headervarianten. Die User können dann auf einer extra Seite sich ihre Wunschvariante selbstaussuchen.",
+		"description" => "Mit diesem Plugin lassen sich über das AdminCP verschiedene Designoptionen per Custom properties (CSS-Variablen) festlegen. Unter anderem Light-/Darkmodes, Designs mit Aktzentfarben, welche die User individuell anpassen können und verschiedene Farb-/Headervarianten. Die User können dann im User-CP sich ihre Wunschvariante selbst festlegen.",
 		"website" => "https://github.com/little-evil-genius/Design-Konfigurator",
 		"author" => "little.evil.genius",
 		"authorsite" => "https://storming-gates.de/member.php?action=profile&uid=1712",
