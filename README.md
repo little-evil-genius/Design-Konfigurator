@@ -2,6 +2,7 @@
 Mit diesem Plugin lassen sich über das AdminCP verschiedene Designoptionen per Root Verzeichnis festlegen. Unter anderem Light-/Darkmodes, Designs mit Aktzentfarben, welche die User individuell anpassen können und verschiedene Farb-/Headervarianten. Die User können dann auf einer extra Seite sich ihre Wunschvariante selbstaussuchen.
 
 # Designs mit verschiedene Farb- und Headervarianten
+Man hat ein hübsches Hauptdesign und hat noch mehre verschiedene Header, aber hat keine Lust oder Kreativität für ein komplet neues Design? In den meisten Fällen wird das Hauptdesign dupliziert und mit den neuen Grafiken und Farben ausgestattet. Das duplizieren kann man sich mit dem Plugin sparen. 
 
 # Designs mit einen Light-/Darkmodus
 
@@ -69,7 +70,9 @@ Wird automatisch in jedes bestehende und neue Design hinzugefügt. Man sollte es
 - euerforum.de/usercp.php?action=designconfigurator
 
 # Dark-/Lightbutton auf dem Index
-Damit man nicht jedes mal die User-CP Seite aufrufen muss und die Helligkeitsvariante vom Design zu wechseln habe ich noch ein Button programmiert, welcher global einsetzbar ist. Standardmäßig wird die Variable für den Button im Footer Template hinter den Stylechanger gelegt. Da die Variable aber global ist könnt ihr diese über all einfügen. Ihr solltet nur beachten, dass Gäste und User den beide sehen können. Da die Einstellung
+Damit man nicht jedes mal die User-CP Seite aufrufen muss und die Helligkeitsvariante vom Design zu wechseln habe ich noch ein Button programmiert, welcher global einsetzbar ist. Standardmäßig wird die Variable für den Button im Footer Template hinter den Stylechanger gelegt. Da die Variable aber global ist könnt ihr diese über all einfügen. Ihr solltet nur beachten, dass Gäste und User den beide sehen können. Bei den Usern wird mit einem Klick auf den Button die Spalte in der users Datenbank entsprechend geupdatet. Bei Gästen läuft der Switch über Cookies. Durch die verschiedene Speicherung gibt es auch zwei Templates für die Buttons - einmal <b>designconfigurator_switcher_button_guest</b> und <b>designconfigurator_switcher_button_member</b>. Ihr könnt die Buttons so coden wie ihr sie braucht und möchtet. <br><b>Wichtig</b> ist nur, dass ihr bestimmte Element nicht weglasst.<br><br>
+<b>designconfigurator_switcher_button_guest</b>: <br>onclick="dark_mode_{$design_option}()"<br><br>
+<b>designconfigurator_switcher_button_member</b>: <br>usercp.php?action=designconfigurator&indexdimm={$activedimm} (das ist der Link, den ihr braucht zum Updaten der Datenbank)
 
 # Disclaimer
 Der Javascript-Code für den Gäste Dark-/Lightbutton auf dem Index stammt aus diesem Tutorial (<a href="https://storming-gates.de/showthread.php?tid=1012199">SG Thema</a> || <a href="https://epic.quodvide.de/showthread.php?tid=74">EPIC Thema</a>) und wurde nur entsprechend angepasst.
