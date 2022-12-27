@@ -11,13 +11,17 @@ Wenn ihr eine neue Variante hinzufügen wollt wird euch eine etwas länger Maske
 
 <b>Theme-ID</b> - Hier werden all eure bisherigen erstellten Themes (Designs) angezeigt. Wählt das entsprechende Theme aus, für welches die Farb-/Variante sein soll. <i>Hinweis:</i> Ich hab die Abfrage der Themes so geschrieben, dass wenn das Design schon bei einem Light/Dark Design oder Design mit Aktzentfarben eingetragen ist nicht nochmal ausgewählt werden kann. Also nicht wundern, wenn dort weniger angezeigt wird.<br><br>
 
-<b>Headergrafik & erste/zweite Aktzentfarbe</b> - Diese drei Felder werden für die Auswahl später im User-CP benötigt. Es soll dabei helfen den Usern einen kleinen Eindruck zugeben, wie das Design aussieht. Welche Farben dominieren in dem Design und wie sieht der Header aus.<br><br>
+<b>Headergrafik & erste/zweite Aktzentfarbe</b> - Diese drei Felder werden für die Auswahl später im User-CP benötigt. Es soll dabei helfen den Usern einen kleinen Eindruck zugeben, wie das Design aussieht. Welche Farben dominieren in dem Design und wie sieht der Header aus. Als Headergrafik muss nicht zwangsläufig ein klassischer Header angegeben werden. Sollte das Design mit einem Hintergrundbild arbeiten, dann kann man auch das angeben oder ihr macht ein Screenshot von dem Design und verlinkt dies. Es geht hier schlichtweg nur um einen Preview für die User im User-CP zu haben.<br><br>
 
 <b>Pfad zu den Bildern</b> - Wir alle kennen die Variable $theme['imgdir']. Hinter dieser Variable ist der Pfad zum Grafikordner versteckt, welchen wir bei den Theme-Eigenschaften angegeben können. Da es vorkommen kann, dass man für eine neue Farb- und Headervariante auch einen anderen Grafikordner ansprechen will, zum Beispiel für Default Avatare oder Kategoriebanner, kann man in diesem Feld für jede Variante einen eigenen Pfad angeben. Wenn das Feld freibleibt, dann wird der Pfad genommen, welcher in den Eigenschaften von dem Design angegeben wurde.<br><br>
 
-<b>Standardmode</b> - Hier wählt man aus, welches Helligkeitsmodus man als Standard haben möchte. Das ist gerade wichtig, wenn man ein Light- und Darkmode für die Variante anbieten möchte. Denn jeder User und jeder Gast, außer es ist was anders eingestellt, wird diesen Modus sehen. <br><br>
+<b>Standardmodus</b> - Hier wählt man aus, welches Helligkeitsmodus man als Standard haben möchte. Das ist gerade wichtig, wenn man ein Light- und Darkmode für die Variante anbieten möchte. Denn jeder User und jeder Gast, außer es ist was anders eingestellt, wird diesen Modus sehen. <br><br>
+
+<b>Zugelassene Benutzergruppen</b> - Diese Funktion kennen wir schon von den Theme-Einstellungen von MyBB und im Grunde ist es genau die selbe Funktion. Wenn das Team ein neue Farb- und Headervariante erstmal in Ruhe testen will, kann es einfach die entsprechenden Gruppen aussuchen und dann wird diese Auswahloption auch nur Accounts in dieser Gruppe angezeigt. Dabei ist es egal, ob die Gruppe in der primären oder sekundären Gruppe angegeben ist.  <br><br>
 
 <b>Lightmode & Darkmode</b> - Hier werden endlich die Farben definiert für die Variante. Wenn ihr beide Felder ausfüllt habt ihr für euer Design automatisch eine dunkle und helle Version. Falls ihr nur eine helle (Light) Version anbieten wollt, dann müsst ihr nur das Lightmode Feld ausfüllen. Für eine dunkle (Dark) Version eben das Feld Darkmode. Es muss auf jeden Fall ein Feld ausgefüllt sein.<br><br>
+
+<b>Benachrichtigung für die User</b> - Bei einer Farb- und Headervariante wird an die Hauptaccounts ein Alert geschickt, mit dem Hinwei, dass es für Design X eine neue Farb- und Headervariante gibt. Das ist ansich praktisch, aber gerade bei Varianten die noch ausgtestet werden müssen oder die für Designs sind, welche noch nicht freigeschalten sind eher unpraktisch. Somit kann man für jede Variante selbst entscheiden, ob ein Alert geschickt werden soll oder nicht.<br><br>
 
 Nachdem ihr all eure Versionen gespeichert habt, werden diese erst nach Themen-ID und dann nach dem Namen sortiert. Ihr könnt die Farb-/Headervorschau sehen, welche Helligkeitsversionen es gibt, die Standard ist Unterstrichen) und wie viele Nutzer welche Variante nutzen.<br>
 Rechts neben den Namen seht ihr blaue Pfeile. Diese kennen wir schon von den Themes und auch hier haben sie genau die selbe Funktion. Über diese Pfeile kann man eine Standardvariante auswählen. Diese wird Usern und auch Gästen als erstes angezeigt, wenn sie das entsprechende Design unten im Stylechanger auswählen. Solltet ihr mal vergessen eine Variante als Standard zu setzen, dann fängt der Code auch das ab. Dann wird einfach die erste Variante, welche für dieses Design erstellt wurde verwendet.
@@ -36,6 +40,8 @@ In der Übersicht der Light-/Darkdesigns wird der Designname, die Theme-ID und d
 # Designs mit individuellen Design-Akzentfarben
 
 # Design Konfiguration im User-CP
+Die Verwaltung vom Design habe ich ins User-CP verlegt. Dort findet ihr erstmal den Platz, um euren Usern zu erklären, wie das ganze Prinzip der persönlichen Anpassungen funktioniert. Den habe ich nicht vorgeschrieben, sondern muss jedes Team selbst schreiben :D<br>
+
 
 # Vorraussetzungen
 Eine ganz klare Vorraussetzung für dieses Plugin sind Designs mit Custom properties (CSS-Variablen). Es müssen nicht zwangsläufig all eure Designs so erstellt worden sein, aber die Designs, welche ihr über das Plugin steuern möchtet. Für Custom properties gibt es im Netz etliche Tutorials und Anleitungen. Ich habe euch das Tutorial von White_Rabbit (Tom) einmal mitgebracht <a href="https://epic.quodvide.de/showthread.php?tid=124">EPIC</a> || <a href="https://storming-gates.de/showthread.php?tid=1012727">SG</a><br>
