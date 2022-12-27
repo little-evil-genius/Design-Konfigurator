@@ -24,7 +24,7 @@ if (class_exists('MybbStuff_MyAlerts_AlertTypeManager')) {
 function designconfigurator_info() {
 	return array(
 		"name" => "Design Konfigurator",
-		"description" => "Mit diesem Plugin lassen sich über das AdminCP verschiedene Designoptionen per Custom properties (CSS-Variablen) festlegen. Unter anderem Light-/Darkmodes, Designs mit Aktzentfarben, welche die User individuell anpassen können und verschiedene Farb-/Headervarianten. Die User können dann im User-CP sich ihre Wunschvariante selbst festlegen.",
+		"description" => "Mit diesem Plugin lassen sich über das AdminCP verschiedene Designoptionen per Root Verzeichnis festlegen. Unter anderem Light-/Darkmodes, Designs mit Aktzentfarben, welche die User individuell anpassen können und verschiedene Farb-/Headervarianten. Die User können dann auf einer extra Seite sich ihre Wunschvariante selbstaussuchen.",
 		"website" => "https://github.com/little-evil-genius/Design-Konfigurator",
 		"author" => "little.evil.genius",
 		"authorsite" => "https://storming-gates.de/member.php?action=profile&uid=1712",
@@ -56,6 +56,7 @@ function designconfigurator_install() {
         `dark_root` longtext COLLATE utf8_general_ci NOT NULL,
         `path` varchar(500) COLLATE utf8_general_ci NOT NULL,
         `individual_colors` varchar(500) COLLATE utf8_general_ci NOT NULL,
+        `allowed_usergroups` varchar(500) COLLATE utf8_general_ci NOT NULL,
         PRIMARY KEY(`did`),
         KEY `did` (`did`)
         )
@@ -113,7 +114,7 @@ function designconfigurator_install() {
 	$insert_array = array(
 		'title' => 'designconfigurator_accentcolor',
 		'template' => $db->escape_string('<div class="designconfi-accentcolor">
-        <table width="100%">
+        <table>
            <tbody>
               <form id="designconfigurator_accentcolor" method="post" action="usercp.php?action=designconfigurator_accentcolor">
                  {$accentcolors_add}
@@ -629,8 +630,10 @@ function designconfigurator_manage_designconfigurator() {
 			$form_container->output_row_header($lang->designconfigurator_manage_modeoption, array('style' => 'text-align: center; width: 10%;'));
 			// Benutzer
 			$form_container->output_row_header($lang->designconfigurator_manage_user, array('style' => 'text-align: center; width: 7%;'));
+			// Gruppen
+			$form_container->output_row_header($lang->designconfigurator_manage_groups, array('style' => 'text-align: center; width: 15%;'));
 			// Optionen
-			$form_container->output_row_header($lang->designconfigurator_manage_options, array('style' => 'text-align: center; width: 20%;'));
+			$form_container->output_row_header($lang->designconfigurator_manage_options, array('style' => 'text-align: center; width: 5%;'));
 
 			// Alle Einträge - nach Style sortieren
 			$query_designs = $db->query("SELECT * FROM ".TABLE_PREFIX."designs
@@ -717,6 +720,24 @@ function designconfigurator_manage_designconfigurator() {
 
 				$form_container->output_cell('<center><strong>'.$count_user.'</strong></center>');
 
+				// Benutzergruppen
+				if ($designconfigurator_designs['allowed_usergroups'] != "all") {
+
+					$allowed_usergroups = explode(",", $designconfigurator_designs['allowed_usergroups']);
+					$allowedgroups = [];
+					foreach($allowed_usergroups as $allowedgroup) {
+	
+						$groupname = $db->fetch_field($db->simple_select("usergroups", "title", "gid = '".$allowedgroup."'"), "title");
+	
+						$allowedgroups[] = $groupname;
+					}
+					$allowedgroups = implode(" &#x26; ", $allowedgroups);
+				} else {
+					$allowedgroups = $lang->designconfigurator_manage_design_all_usergroups;
+				}
+
+                $form_container->output_cell('<center><strong>'.$allowedgroups.'</strong></center>');
+
 				// OPTIONEN
 				$popup = new PopupMenu("designconfigurator_{$designconfigurator_designs['did']}", $lang->designconfigurator_manage_options);
 				$popup->add_item(
@@ -766,9 +787,30 @@ function designconfigurator_manage_designconfigurator() {
 				if (empty($mybb->input['root'])) {
 					$errors[] = $lang->designconfigurator_manage_error_no_rootdef;
 				}
+				if (empty($mybb->input['allowedgroups'])) {
+					$errors[] = $lang->designconfigurator_manage_error_no_allowedgroups;
+				}
+				if (empty($mybb->input['alertsend'])) {
+					$errors[] = $lang->designconfigurator_manage_error_no_alertsend;
+				}
 
 				// No errors - insert
 				if (empty($errors)) {
+
+                    $allowedgroups = array();
+                    if(is_array($mybb->input['allowedgroups'])){
+                        foreach($mybb->input['allowedgroups'] as $gid){
+                            if($gid == "all"){
+                                $allowedgroups = "all";
+                                break;
+                            }
+                            $gid = (int)$gid;
+                            $allowedgroups[$gid] = $gid;
+                        }
+                    }
+                    if(is_array($allowedgroups)){
+                        $allowedgroups = implode(",", $allowedgroups);
+                    }
 
 					$new_design = array(
 						"name" => $db->escape_string($mybb->input['name']),
@@ -779,13 +821,14 @@ function designconfigurator_manage_designconfigurator() {
 						"accentcolor2" => $db->escape_string($mybb->input['accentcolor2']),
 						"light_root" => $db->escape_string($mybb->input['light_root']),
 						"dark_root" => $db->escape_string($mybb->input['dark_root']),
-						"path" => $db->escape_string($mybb->input['path'])
+						"path" => $db->escape_string($mybb->input['path']),
+						"allowed_usergroups" => $allowedgroups
 					);
 
 					$db->insert_query("designs", $new_design);
 
 					// MyALERTS STUFF
-					if (class_exists('MybbStuff_MyAlerts_AlertTypeManager')) {
+					if (class_exists('MybbStuff_MyAlerts_AlertTypeManager') && $mybb->input['alertsend'] == "ja") {
 
 						// Themename
 						$themename = $db->fetch_field($db->simple_select("themes", "name", "tid = '".$mybb->input['tid']."'"), "name");
@@ -896,7 +939,6 @@ function designconfigurator_manage_designconfigurator() {
 			}
 
 			// Stylesheets Dropbox
-			$theme = [];
 			$sort = [];
 			$themes_query = $db->query("SELECT * FROM ".TABLE_PREFIX."themes t
             WHERE tid NOT IN(SELECT tid FROM ".TABLE_PREFIX."designs WHERE headerimage = '' AND light_root != '' AND dark_root != '')
@@ -905,7 +947,6 @@ function designconfigurator_manage_designconfigurator() {
             ");
 			while ($themes = $db->fetch_array($themes_query)) {
 				$tid = $themes['tid'];
-				$theme[$tid] = $themes['name'];
 				$sort[$tid] = $themes['name'];
 			}
 
@@ -924,7 +965,7 @@ function designconfigurator_manage_designconfigurator() {
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_designID_title."<em>*</em>",
 				$lang->designconfigurator_manage_design_designID_desc,
-				$form->generate_select_box('tid', $sort, '', array('id' => 'tid')),
+				$form->generate_select_box('tid', $sort, $mybb->input['tid'], array('id' => 'tid')),
 				'tid'
 			);
 
@@ -965,10 +1006,25 @@ function designconfigurator_manage_designconfigurator() {
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_root_title."<em>*</em>",
 				$lang->designconfigurator_manage_design_root_desc,
-				$form->generate_select_box('root', $rootsystem, '', array('id' => 'root')),
+				$form->generate_select_box('root', $rootsystem, $mybb->input['root'], array('id' => 'root')),
 				'root'
 			);
 
+			// Zugelassene Benutzergruppen
+            $options = array();
+            $query = $db->simple_select("usergroups", "gid, title", "gid != '1'", array('order_by' => 'title'));
+            $options['all'] = $lang->designconfigurator_manage_design_all_usergroups;
+            while($usergroup = $db->fetch_array($query)){
+                $options[(int)$usergroup['gid']] = $usergroup['title'];
+            }
+            $form_container->output_row(
+                $lang->designconfigurator_manage_design_allowed_usergroups_title."<em>*</em>",
+                $lang->designconfigurator_manage_design_allowed_usergroups_desc, 
+                $form->generate_select_box('allowedgroups[]', $options, '', array('id' => 'allowedgroups', 'multiple' => true, 'size' => 5)), 
+                'allowedgroups'
+            );
+
+			// Light 
 			$light_root_editor = $form->generate_text_area('light_root', $mybb->input['light_root'], array(
 				'id' => 'light_root',
 				'style' => 'width: 75%;',
@@ -984,6 +1040,7 @@ function designconfigurator_manage_designconfigurator() {
 				'light_root'
 			);
 
+			// Dark
 			$dark_root_editor = $form->generate_text_area('dark_root', $mybb->input['dark_root'], array(
 				'id' => 'dark_root',
 				'style' => 'width: 99%;',
@@ -997,6 +1054,19 @@ function designconfigurator_manage_designconfigurator() {
 				$lang->designconfigurator_manage_design_darkmode_desc,
 				$dark_root_editor,
 				'dark_root'
+			);
+
+			// Alerts schicken
+			$alertsend = array(
+				"" => $lang->designconfigurator_manage_design_alertsend_def,
+				"ja" => $lang->designconfigurator_manage_design_alertsend_yes,
+				"nein" => $lang->designconfigurator_manage_design_alertsend_no,
+			);
+			$form_container->output_row(
+				$lang->designconfigurator_manage_design_alertsend_title."<em>*</em>",
+				$lang->designconfigurator_manage_design_alertsend_desc,
+				$form->generate_select_box('alertsend', $alertsend, $mybb->input['alertsend'], array('id' => 'alertsend')),
+				'alertsend'
 			);
 
 			$form_container->end();
@@ -1069,11 +1139,32 @@ function designconfigurator_manage_designconfigurator() {
 				if (empty($mybb->input['root'])) {
 					$errors[] = $lang->designconfigurator_manage_error_no_rootdef;
 				}
+				if (empty($mybb->input['allowedgroups'])) {
+					$errors[] = $lang->designconfigurator_manage_error_no_allowedgroups;
+				}
+				if (empty($mybb->input['alertsend'])) {
+					$errors[] = $lang->designconfigurator_manage_error_no_alertsend;
+				}
 
-				// No errors - insert the terms of use
+				// No errors - insert
 				if (empty($errors)) {
 
 					$did = $mybb->get_input('did', MyBB::INPUT_INT);
+
+                    $allowedgroups = array();
+                    if(is_array($mybb->input['allowedgroups'])){
+                        foreach($mybb->input['allowedgroups'] as $gid){
+                            if($gid == "all"){
+                                $allowedgroups = "all";
+                                break;
+                            }
+                            $gid = (int)$gid;
+                            $allowedgroups[$gid] = $gid;
+                        }
+                    }
+                    if(is_array($allowedgroups)){
+                        $allowedgroups = implode(",", $allowedgroups);
+                    }
 
 					$edited_design = [
 						"tid" => $db->escape_string($mybb->input['tid']),
@@ -1083,10 +1174,52 @@ function designconfigurator_manage_designconfigurator() {
 						"accentcolor2" => $db->escape_string($mybb->input['accentcolor2']),
 						"light_root" => $db->escape_string($mybb->input['light_root']),
 						"dark_root" => $db->escape_string($mybb->input['dark_root']),
-						"path" => $db->escape_string($mybb->input['path'])
+						"path" => $db->escape_string($mybb->input['path']),
+						"allowed_usergroups" => $allowedgroups
 					];
 
 					$db->update_query("designs", $edited_design, "did='{$did}'");
+
+					// MyALERTS STUFF
+					if (class_exists('MybbStuff_MyAlerts_AlertTypeManager') && $mybb->input['alertsend'] == "ja") {
+
+						// Themename
+						$themename = $db->fetch_field($db->simple_select("themes", "name", "tid = '".$mybb->input['tid']."'"), "name");
+
+						// Admin-Infos
+						$adminUid = "1";
+						$adminname = $db->fetch_field($db->simple_select("users", "username", "uid = '".$adminUid."'"), "username");
+
+						$user_query = $db->simple_select("users", "uid", "as_uid = '0'");
+
+						$alluids = "";
+						while ($user = $db->fetch_array($user_query)) {
+
+							$alluids .= $user['uid'].",";
+						}
+
+						// letztes Komma vom UID-String entfernen
+						$alluids_string = substr($alluids, 0, -1);
+
+						// UIDs in Array für Foreach
+						$alluids_array = explode(",", $alluids_string);
+
+						// Foreach um die einzelnen Partners durchzugehen
+						foreach ($alluids_array as $user_id) {
+
+							$alertType = MybbStuff_MyAlerts_AlertTypeManager::getInstance()->getByCode('designconfigurator_newDesign');
+							if ($alertType != NULL && $alertType->getEnabled()) {
+								$alert = new MybbStuff_MyAlerts_Entity_Alert((int)$user_id, $alertType);
+								$alert->setExtraDetails([
+									'username' => $adminname,
+									'from' => $adminUid,
+									'themename' => $themename,
+								]);
+								MybbStuff_MyAlerts_AlertManager::getInstance()->addAlert($alert);
+							}
+
+						}
+					}
 
 					$mybb->input['module'] = "designconfigurator";
 					$mybb->input['action'] = $lang->designconfigurator_manage_design_edited;
@@ -1240,6 +1373,20 @@ function designconfigurator_manage_designconfigurator() {
 				'root'
 			);
 
+			// Zugelassene Benutzergruppen
+            $options = array();
+            $query = $db->simple_select("usergroups", "gid, title", "gid != '1'", array('order_by' => 'title'));
+            $options['all'] = $lang->designconfigurator_manage_design_all_usergroups;
+            while($usergroup = $db->fetch_array($query)){
+                $options[(int)$usergroup['gid']] = $usergroup['title'];
+            }
+            $form_container->output_row(
+                $lang->designconfigurator_manage_design_allowed_usergroups_title."<em>*</em>",
+                $lang->designconfigurator_manage_design_allowed_usergroups_desc, 
+                $form->generate_select_box('allowedgroups[]', $options, explode(",", $edit_design['allowed_usergroups']), array('id' => 'allowedgroups', 'multiple' => true, 'size' => 5)), 
+                'allowedgroups'
+            );
+
 			$light_root_editor = $form->generate_text_area('light_root', $edit_design['light_root'], array(
 				'id' => 'light_root',
 				'style' => 'width: 75%;',
@@ -1268,6 +1415,19 @@ function designconfigurator_manage_designconfigurator() {
 				$lang->designconfigurator_manage_design_darkmode_desc,
 				$dark_root_editor,
 				'dark_root'
+			);
+
+			// Alerts schicken
+			$alertsend = array(
+				"" => $lang->designconfigurator_manage_design_alertsend_def,
+				"ja" => $lang->designconfigurator_manage_design_alertsend_yes,
+				"nein" => $lang->designconfigurator_manage_design_alertsend_no,
+			);
+			$form_container->output_row(
+				$lang->designconfigurator_manage_design_alertsend_title."<em>*</em>",
+				$lang->designconfigurator_manage_design_alertsend_desc,
+				$form->generate_select_box('alertsend', $alertsend, $mybb->input['alertsend'], array('id' => 'alertsend')),
+				'alertsend'
 			);
 
 			$form_container->end();
@@ -2999,6 +3159,10 @@ function designconfigurator_usercp() {
 	// AKTZENTFARBEN
 	$own_accentcolor = $mybb->user['individual_colors'];
 
+	// BENUTZERGRUPPEN
+	$usergroup = $mybb->user['usergroup'];
+	$additionalgroups  = $mybb->user['additionalgroups'];
+
 	if ($mybb->input['action'] == "designconfigurator") {
 
         add_breadcrumb($lang->designconfigurator_usercp, "usercp.php?action=designconfigurator");
@@ -3020,8 +3184,20 @@ function designconfigurator_usercp() {
 			// Headerimage = Farb-/Headerwechsel
 			if (!empty($designoption_header) AND empty($designoption_individualcolors)) {
 
+				if (!empty($additionalgroups)) {
+					$additionalgroups = explode (",", $additionalgroups);
+					$additionalgroups_sql = "";	
+					foreach ($additionalgroups as $additionalgroup) {
+						$additionalgroups_sql .= "OR (concat(',',allowed_usergroups,',') LIKE '%,".$additionalgroup.",%')\n";
+					}
+				} else {
+					$additionalgroups_sql = "";
+				}
+
 				$designs_query = $db->query("SELECT * FROM ".TABLE_PREFIX."designs
                 WHERE tid = '".$style_id."'
+				AND allowed_usergroups = 'all' OR (concat(',',allowed_usergroups,',') LIKE '%,".$usergroup.",%') 
+				$additionalgroups_sql
                 ORDER BY name ASC
                 ");
 
