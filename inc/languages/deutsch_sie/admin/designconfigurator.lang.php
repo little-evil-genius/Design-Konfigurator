@@ -30,6 +30,7 @@ $l['designconfigurator_manage_headerimage'] = "Vorschau der Kombination";
 $l['designconfigurator_manage_modeoption'] = "Light-/Darkmodus";
 $l['designconfigurator_manage_defaultmode'] = "Standardmodus";
 $l['designconfigurator_manage_user'] = "Benutzer";
+$l['designconfigurator_manage_groups'] = "Benutzergruppen";
 $l['designconfigurator_manage_individualcolors'] = "Design-Akzentfarbe(n)";
 $l['designconfigurator_manage_options'] = "Optionen";
 // Optionsbutton
@@ -49,6 +50,8 @@ $l['designconfigurator_manage_error_no_light_root'] = "Der Inhalt für den Light
 $l['designconfigurator_manage_error_no_dark_root'] = "Der Inhalt für den Darkmodus ist leer.";
 $l['designconfigurator_manage_error_no_rootdef'] = "Es muss noch ausgewählt werden, welcher Modus der Standardmodus vom Design ist.";
 $l['designconfigurator_manage_error_no_individualcolors'] = "Es muss noch mindestens eine Aktzentfarbe angegeben werden.";
+$l['designconfigurator_manage_error_no_allowedgroups'] = "Die zugelassenen Benutzergruppen müssen noch ausgewählt werden.";
+$l['designconfigurator_manage_error_no_alertsend'] = "Die Benachrichtigungsoption muss noch ausgewählt werden.";
 
 $l['designconfigurator_manage_design_name_title'] = "Designname";
 $l['designconfigurator_manage_design_name_desc'] = "Gib hier ein Schlagwort für das Design an. Vermeide Leerzeichen und Sonderzeichen. Benutze _ oder - anstelle des Leerzeichens.";
@@ -75,6 +78,14 @@ $l['designconfigurator_manage_accentcolor_individualcolors_desc'] = "Trage hier 
 $l['designconfigurator_manage_design_root_select_def'] = "Standardmode auswählen";
 $l['designconfigurator_manage_design_root_select_light'] = "Standard: Lightmodus";
 $l['designconfigurator_manage_design_root_select_dark'] = "Standard: Darkmodus";
+$l['designconfigurator_manage_design_all_usergroups'] = "Alle Benutzergruppen";
+$l['designconfigurator_manage_design_allowed_usergroups_title'] = "Zugelassene Benutzergruppen";
+$l['designconfigurator_manage_design_allowed_usergroups_desc'] = "Bestimme, welche Benutzergruppen diese Farb- und Headerkombination verwenden dürfen. Die Auswahl von 'Alle Benutzergruppen' überschreibt jede anderen Auswahl. Durch Drücken der STRG-Taste, können mehrere Benutzergruppen ausgewählt werden.";
+$l['designconfigurator_manage_design_alertsend_def'] = "Benachrichtigungsoption";
+$l['designconfigurator_manage_design_alertsend_yes'] = "Benachrichtigung verschicken";
+$l['designconfigurator_manage_design_alertsend_no'] = "keine Benachrichtigung verschicken";
+$l['designconfigurator_manage_design_alertsend_title'] = "Benachrichtigung für die User";
+$l['designconfigurator_manage_design_alertsend_desc'] = "Soll ein Alert an alle <b>Hauptaccounts</b> geschickt werden, mit der Information, dass es eine neue Farb- und Headerkombination für dieses Design gibt?";
 
 $l['designconfigurator_manage_submit_add'] = "Kombination hinzufügen";
 $l['designconfigurator_manage_submit_add_mode'] = "Light-/Darkmodus hinzufügen";
