@@ -51,7 +51,9 @@ Als Standardfarben ist folgendes eingetragen: "#6B2C75, #33752C, #6e8d92". Dann 
 
 <b>Lightmode & Darkmode</b> - Hier werden die CSS-Variablen für das Design definiert. Wenn ihr beide Felder ausgefüllt habt, habt ihr für euer Design automatisch eine dunkle und helle Version. Falls ihr nur eine helle (Light) Version anbieten wollt, dann müsst ihr nur das Lightmode Feld ausfüllen. Für eine dunkle (Dark) Version eben das Feld Darkmode. Es muss auf jeden Fall ein Feld ausgefüllt sein. Die Variable(n) --accent[Nummer] sollen hier <b>nicht</b> nochmal definiert werden!<br><br>
 
-Auf der Übersichtsseite der Designs mit Akzentfarbe(n) wird der Designname und die entsprechende Theme-ID angezeigt. Genauso, welche Helligkeitsmöglichkeiten es für das Design gibt und im Falle, dass es einen Light und Darkmodus gibt, wird der Standardmodus unterstrichen. Auch werden die Standard-Akzentfarbe(n) aufgelistet.
+Auf der Übersichtsseite der Designs mit Akzentfarbe(n) wird der Designname und die entsprechende Theme-ID angezeigt. Genauso, welche Helligkeitsmöglichkeiten es für das Design gibt und im Falle, dass es einen Light und Darkmodus gibt, wird der Standardmodus unterstrichen. Auch werden die Standard-Akzentfarbe(n) aufgelistet.<br><br>
+
+Ein gutes Live Beispiel für Light-/Darkdesigns sind die zwei Designs "Postcards from Scotland" & "Auld Lang Syne" vom <a href="https://shadesoflife.de/index.php">Shades of Life</a>. Beide Designs sind gleich aufgebaut nur einmal in dunklen Farben und einmal in hellen Farben. Beide Designs könnte man übers ACP einpflegen und im Stylechanger wäre das Design nur einmal aufgelistet.
 
 # Design Konfiguration im User-CP
 Die Verwaltung vom Design habe ich ins User-CP verlegt. Dort findet ihr erstmal den Platz, um euren Usern zu erklären, wie das ganze Prinzip der persönlichen Anpassungen funktioniert. Den habe ich nicht vorgeschrieben, da es so individuell geschrieben werden kann, dass es jedes Team selbst schreiben muss. :D<br>
