@@ -635,12 +635,43 @@ function designconfigurator_manage_designconfigurator() {
 			// Optionen
 			$form_container->output_row_header($lang->designconfigurator_manage_options, array('style' => 'text-align: center; width: 5%;'));
 
+			$designs_count = $db->fetch_field($db->query("SELECT COUNT(*) as designs FROM ".TABLE_PREFIX."designs
+            WHERE headerimage != ''
+            AND accentcolor1 != ''
+            AND accentcolor2 != ''
+			"), 'designs');
+			
+        
+			$mybb->input['perpage'] = $mybb->get_input('perpage', MyBB::INPUT_INT);
+            if ($mybb->input['perpage'] > 0 && $mybb->input['perpage'] <= 50) {
+                $perpage = $mybb->input['perpage'];
+            } else {
+                $perpage = $mybb->input['perpage'] = 10;
+            }
+
+			// Page
+            $pageview = $mybb->get_input('page', MyBB::INPUT_INT);
+            if ($pageview && $pageview > 0) {
+                $start = ($pageview - 1) * $perpage;
+            } else {
+                $start = 0;
+                $pageview = 1;
+            }
+			
+            $end = $start + $perpage;
+            $lower = $start+1;
+            $upper = $end;
+            if($upper > $designs_count) {
+                $upper = $designs_count;
+            }
+
 			// Alle Einträge - nach Style sortieren
 			$query_designs = $db->query("SELECT * FROM ".TABLE_PREFIX."designs
             WHERE headerimage != ''
             AND accentcolor1 != ''
             AND accentcolor2 != ''
             ORDER BY tid ASC, name ASC
+			LIMIT $start, $perpage
             ");
 
 			while ($designconfigurator_designs = $db->fetch_array($query_designs)) {
@@ -755,6 +786,12 @@ function designconfigurator_manage_designconfigurator() {
 
 			$form_container->end();
 			$form->end();
+            // Multipage
+            $search_url = htmlspecialchars_uni(
+                "index.php?module=style-designconfigurator&{$mybb->input['perpage']}"
+            );
+            $multipage = multipage($designs_count, $perpage, $pageview, $search_url);
+            echo $multipage;
 			$page->output_footer();
 
 			exit;
