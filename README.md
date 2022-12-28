@@ -35,7 +35,8 @@ Manchmal hätte man gerne das gleiche Design einfach nochmal in dunkel oder in h
 
 <b>Lightmode & Darkmode</b> - Hier werden die CSS-Variablen definiert. Hier sollten auf jeden Fall beide Felder ausgefüllt werden, da es sonst kein Sinn macht für dieses Design diese Switchversion anzubieten.<br><br>
 
-In der Übersicht der Light-/Darkdesigns wird der Designname, die Theme-ID und der Standardmode angezeigt. 
+In der Übersicht der Light-/Darkdesigns wird der Designname, die Theme-ID und der Standardmode angezeigt.<br><br>
+Ein gutes Live Beispiel für Light-/Darkdesigns sind die zwei Designs "Postcards from Scotland" & "Auld Lang Syne" vom <a href="https://shadesoflife.de/">Shades of Life</a>. Beide Designs sind gleich aufgebaut nur einmal in dunklen Farben und einmal in hellen Farben. Beide Designs könnte man übers ACP einpflegen und im Stylechanger wäre das Design nur einmal aufgelistet.
 
 # Designs mit individuellen Design-Akzentfarben
 Es gibt Designs die arbeiten mit einer oder vielleicht auch einer zweiten Highlightfarbe. Als Team findet man die Farbe, welche man gewählt besonders toll, aber vielleicht nicht jeder User mag die Farbe und hätte gerne lieber statt dem Rot ein Grün. Mit den persönlichen individuellen Design-Akzentfarben kann man das in Zukunft für seine User einrichten und jeder kann sich das Design so einfärben wie er oder sie es gerne hätte.<br>
