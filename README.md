@@ -82,22 +82,22 @@ hinzugefügte Spalten in der Tabelle PRÄFIX_users:
 - Design Konfigurator
 
 # Neue Templates (nicht global!)
-- designconfigurator    
-- designconfigurator_accentcolor    
-- designconfigurator_accentcolor_add    
-- designconfigurator_accentcolor_none    
-- designconfigurator_accentcolor_own    
-- designconfigurator_designswitch    
-- designconfigurator_designswitch_active    
-- designconfigurator_designswitch_link    
-- designconfigurator_designswitch_none    
-- designconfigurator_lightdarkmode    
-- designconfigurator_lightdarkmode_none    
-- designconfigurator_switcher_button_guest    
-- designconfigurator_switcher_button_member    
-- designconfigurator_switcher_guest_js_accentcolor    
-- designconfigurator_switcher_guest_js_design    
-- designconfigurator_switcher_guest_js_mode    
+- designconfigurator	
+- designconfigurator_accentcolor	
+- designconfigurator_accentcolor_add	
+- designconfigurator_accentcolor_none	
+- designconfigurator_accentcolor_own	
+- designconfigurator_designswitch	
+- designconfigurator_designswitch_active	
+- designconfigurator_designswitch_link	
+- designconfigurator_designswitch_none	
+- designconfigurator_lightdarkmode	
+- designconfigurator_lightdarkmode_none	
+- designconfigurator_switcher_button_guest	
+- designconfigurator_switcher_button_member	
+- designconfigurator_switcher_guest_js_accentcolor	
+- designconfigurator_switcher_guest_js_design	
+- designconfigurator_switcher_guest_js_mode	
 - designconfigurator_usercp_nav
 
 # Template Änderungen - neue Variablen
