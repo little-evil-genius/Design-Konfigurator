@@ -24,7 +24,10 @@ Wenn ihr eine neue Variante hinzufügen wollt, wird euch eine etwas länger Mask
 <b>Benachrichtigung für die User</b> - Bei einer Farb- und Headervariante wird an die Hauptaccounts ein Alert geschickt, mit dem Hinweis, dass es für Design X eine neue Farb- und Headervariante gibt. Das ist an sich praktisch, aber gerade bei Varianten, die noch ausgtestet werden müssen oder die für Designs sind, welche noch nicht freigeschaltet sind, eher unpraktisch, deswegen kann man für jede Variante selbst entscheiden, ob ein Alert geschickt werden soll oder nicht.<br><br>
 
 Nachdem ihr all eure Versionen gespeichert habt, werden diese erst nach Themen-ID und dann nach dem Namen sortiert. Ihr könnt die Farb-/Headervorschau sehen, welche Helligkeitsversionen es gibt (die Standardversion ist Unterstrichen) und wie viele Nutzer welche Variante nutzen. Damit die Übersicht nicht zu voll wird, werden die Kombinationen ab 10 Stück auf mehrere Seiten durch eine Multipage gestückelt.<br>
-Rechts neben den Namen seht ihr blaue Pfeile. Diese kennen wir schon von den Themes und auch hier haben sie genau dieselbe Funktion. Über diese Pfeile kann man eine Standardvariante auswählen. Diese wird Usern und auch Gästen als erstes angezeigt, wenn sie das entsprechende Design unten im Stylechanger auswählen. Solltet ihr mal vergessen eine Variante als Standard zu setzen, dann fängt der Code auch das ab. Dann wird einfach die erste Variante, welche für dieses Design erstellt wurde, verwendet.
+Rechts neben den Namen seht ihr blaue Pfeile. Diese kennen wir schon von den Themes und auch hier haben sie genau dieselbe Funktion. Über diese Pfeile kann man eine Standardvariante auswählen. Diese wird Usern und auch Gästen als erstes angezeigt, wenn sie das entsprechende Design unten im Stylechanger auswählen. Solltet ihr mal vergessen eine Variante als Standard zu setzen, dann fängt der Code auch das ab. Dann wird einfach die erste Variante, welche für dieses Design erstellt wurde, verwendet.<br><br>
+
+<b>Beispiel</b><br>
+Ein gutes Live Beispiel für ein Design mit verschiedene Farb- und Headervarianten bietet das Forum <a href="https://million-voices.com/">Million Voices</a>. Dort stehen aktuell 5 Designs im Stylechanger zur Auswahl und alle sind codetechnisch 1:1 gleich aufgebaut, sie unterscheiden sich nur in ihren Grafiken und Farben. Hier könnte man es einfacher übers ACP steuern und die User dann die Entscheidung im User-CP überlassen.
 
 # Designs mit einen Light-/Darkmodus
 Manchmal hätte man gerne das gleiche Design einfach nochmal in dunkel oder in hell. Auch hier könnte man das Design einfach duplizieren und einmal in hell und einmal in dunkel anbieten, allerdings stopft das auf Dauer den Stylechanger ja auch etwas voll. Mit der zweiten Design Option von diesem Plugin kann man auch recht einfach einen Light- und Darkmode für ein Design erstellen. Auch hierfür benötigt man wieder Custom properties (CSS-Variablen). Das hinzufügen eines Light-/Darkmode ist nicht ganz so umfangreich wie beim hinzufügen einer neuen Header-/Farbvariante.<br><br>
@@ -35,7 +38,10 @@ Manchmal hätte man gerne das gleiche Design einfach nochmal in dunkel oder in h
 
 <b>Lightmode & Darkmode</b> - Hier werden die CSS-Variablen definiert. Hier sollten auf jeden Fall beide Felder ausgefüllt werden, da es sonst keinen Sinn macht für dieses Design diese Switchversion anzubieten.<br><br>
 
-In der Übersicht der Light-/Darkdesigns wird der Designname, die Theme-ID und der Standardmode angezeigt. 
+In der Übersicht der Light-/Darkdesigns wird der Designname, die Theme-ID und der Standardmode angezeigt. <br><br>
+
+<b>Beispiel</b><br>
+Ein gutes Live Beispiel für Light-/Darkdesigns sind die zwei Designs "Postcards from Scotland" & "Auld Lang Syne" vom <a href="https://shadesoflife.de/">Shades of Life</a>. Beide Designs sind gleich aufgebaut nur einmal in dunklen Farben und einmal in hellen Farben. Beide Designs könnte man übers ACP einpflegen und im Stylechanger wäre das Design nur einmal aufgelistet.
 
 # Designs mit individuellen Design-Akzentfarben
 Es gibt Designs, die arbeiten mit einer oder vielleicht auch einer zweiten Highlightfarbe. Als Team findet man die Farbe, welche man gewählt hat besonders toll, aber vielleicht mag nicht  jeder User die Farbe und hätte gerne lieber statt dem Rot ein Grün. Mit den persönlichen individuellen Design-Akzentfarben kann man das in Zukunft für seine User einrichten und jeder kann sich das Design so einfärben wie er oder sie es gerne hätte.<br>
@@ -53,7 +59,12 @@ Als Standardfarben ist folgendes eingetragen: "#6B2C75, #33752C, #6e8d92". Dann 
 
 Auf der Übersichtsseite der Designs mit Akzentfarbe(n) wird der Designname und die entsprechende Theme-ID angezeigt. Genauso, welche Helligkeitsmöglichkeiten es für das Design gibt und im Falle, dass es einen Light und Darkmodus gibt, wird der Standardmodus unterstrichen. Auch werden die Standard-Akzentfarbe(n) aufgelistet.<br><br>
 
-Ein gutes Live Beispiel für Light-/Darkdesigns sind die zwei Designs "Postcards from Scotland" & "Auld Lang Syne" vom <a href="https://shadesoflife.de/index.php">Shades of Life</a>. Beide Designs sind gleich aufgebaut nur einmal in dunklen Farben und einmal in hellen Farben. Beide Designs könnte man übers ACP einpflegen und im Stylechanger wäre das Design nur einmal aufgelistet.
+<b>Beispiel</b><br>
+Dank den zwei lieben Adminas (Nathalie & Michelle) vom <a href="https://toofastforfreedom.de/">too fast for freedom</a>, die auch ein Design mit individuellen Akzentfarben haben, habe ich auch ein Beispiel für diese Designoption. <br>
+Standardmäßig hat das Design eine hellblaue Aktzentfarbe
+<img src="https://abload.de/img/screenshot2022-12-28af2il4.png"> <br>
+Nach einer individuellen Anpassung hat das Design nun eine grüne Aktzentfarbe
+<img src="https://abload.de/img/screenshot2022-12-28agodhw.png"> 
 
 # Design Konfiguration im User-CP
 Die Verwaltung vom Design habe ich ins User-CP verlegt. Dort findet ihr erstmal den Platz, um euren Usern zu erklären, wie das ganze Prinzip der persönlichen Anpassungen funktioniert. Den habe ich nicht vorgeschrieben, da es so individuell geschrieben werden kann, dass es jedes Team selbst schreiben muss. :D<br>
