@@ -3612,7 +3612,7 @@ function designconfigurator_usercp() {
 
 			$db->update_query("users", $update_indexswitchdimm, "uid = '".$user_id."'");
 
-			redirect("usercp.php?action=designconfigurator", $lang->designconfigurator_redirect_designdimm);
+			redirect($mybb->input['saveurl'], $lang->designconfigurator_redirect_designdimm);
 
 		}
 
