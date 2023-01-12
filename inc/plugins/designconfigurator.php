@@ -56,8 +56,8 @@ function designconfigurator_install() {
         `dark_root` longtext COLLATE utf8_general_ci NOT NULL,
         `path` varchar(500) COLLATE utf8_general_ci NOT NULL,
         `individual_colors` varchar(500) COLLATE utf8_general_ci NOT NULL,
-        `allowed_usergroups` varchar(500) COLLATE utf8_general_ci NOT NULL,
-        PRIMARY KEY(`did`),
+		`allowed_usergroups` varchar(500) COLLATE utf8_general_ci NOT NULL,
+		PRIMARY KEY(`did`),
         KEY `did` (`did`)
         )
         ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1
@@ -254,7 +254,11 @@ function designconfigurator_install() {
 
 	$insert_array = array(
 		'title' => 'designconfigurator_switcher_button_member',
-		'template' => $db->escape_string('<button onclick="window.location.href=\'usercp.php?action=designconfigurator&indexdimm={$activedimm}\';">{$lang->switcher_lightdarkbutton}</button>'),
+		'template' => $db->escape_string('<form method="post" action="usercp.php?action=designconfigurator">     
+		<input type="hidden" name="saveurl" value="{$saveurl}" /> 
+		<input type="hidden" value="{$activedimm}" name="indexdimm" class="button">
+		<input type="submit" value="{$lang->switcher_lightdarkbutton}" class="button" name="send_indexdimm">
+	</form>'),
 		'sid' => '-2',
 		'version' => '',
 		'dateline' => TIME_NOW
@@ -751,7 +755,7 @@ function designconfigurator_manage_designconfigurator() {
 
 				$form_container->output_cell('<center><strong>'.$count_user.'</strong></center>');
 
-				// Benutzergruppen
+                // Benutzergruppen
 				if ($designconfigurator_designs['allowed_usergroups'] != "all") {
 
 					$allowed_usergroups = explode(",", $designconfigurator_designs['allowed_usergroups']);
@@ -995,14 +999,14 @@ function designconfigurator_manage_designconfigurator() {
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_name_title."<em>*</em>",
 				$lang->designconfigurator_manage_design_name_desc,
-				$form->generate_text_box('name', $mybb->input['name'])
+				$form->generate_text_box('name', $mybb->get_input('name'))
 			);
 
 			// Themen ID
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_designID_title."<em>*</em>",
 				$lang->designconfigurator_manage_design_designID_desc,
-				$form->generate_select_box('tid', $sort, $mybb->input['tid'], array('id' => 'tid')),
+				$form->generate_select_box('tid', $sort, $mybb->get_input('tid'), array('id' => 'tid')),
 				'tid'
 			);
 
@@ -1010,28 +1014,28 @@ function designconfigurator_manage_designconfigurator() {
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_headerimage_title."<em>*</em>",
 				$lang->designconfigurator_manage_design_headerimage_desc,
-				$form->generate_text_box('headerimage', $mybb->input['headerimage'])
+				$form->generate_text_box('headerimage', $mybb->get_input('headerimage'))
 			);
 
 			// Aktzentfarbe1
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_accentcolor1_title."<em>*</em>",
 				$lang->designconfigurator_manage_design_accentcolor1_desc,
-				$form->generate_text_box('accentcolor1', $mybb->input['accentcolor1'])
+				$form->generate_text_box('accentcolor1', $mybb->get_input('accentcolor1'))
 			);
 
 			// Aktzentfarbe2
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_accentcolor2_title."<em>*</em>",
 				$lang->designconfigurator_manage_design_accentcolor2_desc,
-				$form->generate_text_box('accentcolor2', $mybb->input['accentcolor2'])
+				$form->generate_text_box('accentcolor2', $mybb->get_input('accentcolor2'))
 			);
 
 			// Pfad Bilder
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_path_title."<em>*</em>",
 				$lang->designconfigurator_manage_design_path_desc,
-				$form->generate_text_box('path', $mybb->input['path'])
+				$form->generate_text_box('path', $mybb->get_input('path'))
 			);
 
 			// Standard Root
@@ -1043,12 +1047,12 @@ function designconfigurator_manage_designconfigurator() {
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_root_title."<em>*</em>",
 				$lang->designconfigurator_manage_design_root_desc,
-				$form->generate_select_box('root', $rootsystem, $mybb->input['root'], array('id' => 'root')),
+				$form->generate_select_box('root', $rootsystem, $mybb->get_input('root'), array('id' => 'root')),
 				'root'
 			);
 
 			// Zugelassene Benutzergruppen
-            $options = array();
+			$options = array();
             $query = $db->simple_select("usergroups", "gid, title", "gid != '1'", array('order_by' => 'title'));
             $options['all'] = $lang->designconfigurator_manage_design_all_usergroups;
             while($usergroup = $db->fetch_array($query)){
@@ -1062,7 +1066,7 @@ function designconfigurator_manage_designconfigurator() {
             );
 
 			// Light 
-			$light_root_editor = $form->generate_text_area('light_root', $mybb->input['light_root'], array(
+			$light_root_editor = $form->generate_text_area('light_root', $mybb->get_input('light_root'), array(
 				'id' => 'light_root',
 				'style' => 'width: 75%;',
 				'class' => '',
@@ -1078,7 +1082,7 @@ function designconfigurator_manage_designconfigurator() {
 			);
 
 			// Dark
-			$dark_root_editor = $form->generate_text_area('dark_root', $mybb->input['dark_root'], array(
+			$dark_root_editor = $form->generate_text_area('dark_root', $mybb->get_input('dark_root'), array(
 				'id' => 'dark_root',
 				'style' => 'width: 99%;',
 				'class' => '',
@@ -1102,7 +1106,7 @@ function designconfigurator_manage_designconfigurator() {
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_alertsend_title."<em>*</em>",
 				$lang->designconfigurator_manage_design_alertsend_desc,
-				$form->generate_select_box('alertsend', $alertsend, $mybb->input['alertsend'], array('id' => 'alertsend')),
+				$form->generate_select_box('alertsend', $alertsend, $mybb->get_input('alertsend'), array('id' => 'alertsend')),
 				'alertsend'
 			);
 
@@ -1183,7 +1187,7 @@ function designconfigurator_manage_designconfigurator() {
 					$errors[] = $lang->designconfigurator_manage_error_no_alertsend;
 				}
 
-				// No errors - insert
+				// No errors - insert the terms of use
 				if (empty($errors)) {
 
 					$did = $mybb->get_input('did', MyBB::INPUT_INT);
@@ -1364,7 +1368,7 @@ function designconfigurator_manage_designconfigurator() {
 			// Themen ID
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_designID_title."<em>*</em>",
-				$lang->designconfigurator_manage_design_designID__desc,
+				$lang->designconfigurator_manage_design_designID_desc,
 				$form->generate_select_box('tid', $sorted, $edit_design['tid'], array('id' => 'tid')),
 				'tid'
 			);
@@ -1810,7 +1814,7 @@ function designconfigurator_manage_designconfigurator() {
 				'root'
 			);
 
-			$light_root_editor = $form->generate_text_area('light_root', $mybb->input['light_root'], array(
+			$light_root_editor = $form->generate_text_area('light_root', $mybb->get_input('light_root'), array(
 				'id' => 'light_root',
 				'style' => 'width: 75%;',
 				'class' => '',
@@ -1825,7 +1829,7 @@ function designconfigurator_manage_designconfigurator() {
 				'light_root'
 			);
 
-			$dark_root_editor = $form->generate_text_area('dark_root', $mybb->input['dark_root'], array(
+			$dark_root_editor = $form->generate_text_area('dark_root', $mybb->get_input('dark_root'), array(
 				'id' => 'dark_root',
 				'style' => 'width: 99%;',
 				'class' => '',
@@ -1989,6 +1993,9 @@ function designconfigurator_manage_designconfigurator() {
 				$page->output_inline_error($errors);
 			}
 
+			// Get the data
+			$did = $mybb->get_input('did', MyBB::INPUT_INT);
+
 			// Stylesheets Dropbox
 			$theme = [];
 			$sorted = [];
@@ -2004,8 +2011,6 @@ function designconfigurator_manage_designconfigurator() {
 				$sorted[$tid] = $themes['name'];
 			}
 
-			// Get the data
-			$did = $mybb->get_input('did', MyBB::INPUT_INT);
 			$edit_query = $db->simple_select("designs", "*", "did={$did}");
 			$edit_mode = $db->fetch_array($edit_query);
 
@@ -2018,7 +2023,7 @@ function designconfigurator_manage_designconfigurator() {
 			// Themen ID
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_designID_title."<em>*</em>",
-				$lang->designconfigurator_manage_mode_designID__desc,
+				$lang->designconfigurator_manage_mode_designID_desc,
 				$form->generate_select_box('tid', $sorted, $edit_mode['tid'], array('id' => 'tid')),
 				'tid'
 			);
@@ -2424,10 +2429,10 @@ function designconfigurator_manage_designconfigurator() {
 			$form_container->output_row(
 				$lang->designconfigurator_manage_accentcolor_individualcolors_title."<em>*</em>",
 				$lang->designconfigurator_manage_accentcolor_individualcolors_desc,
-				$form->generate_text_box('individual_colors', $mybb->input['individual_colors'])
+				$form->generate_text_box('individual_colors', $mybb->get_input('individual_colors'))
 			);
 
-			$light_root_editor = $form->generate_text_area('light_root', $mybb->input['light_root'], array(
+			$light_root_editor = $form->generate_text_area('light_root', $mybb->get_input('light_root'), array(
 				'id' => 'light_root',
 				'style' => 'width: 75%;',
 				'class' => '',
@@ -2442,7 +2447,7 @@ function designconfigurator_manage_designconfigurator() {
 				'light_root'
 			);
 
-			$dark_root_editor = $form->generate_text_area('dark_root', $mybb->input['dark_root'], array(
+			$dark_root_editor = $form->generate_text_area('dark_root', $mybb->get_input('dark_root'), array(
 				'id' => 'dark_root',
 				'style' => 'width: 99%;',
 				'class' => '',
@@ -2606,6 +2611,9 @@ function designconfigurator_manage_designconfigurator() {
 				$page->output_inline_error($errors);
 			}
 
+			// Get the data
+			$did = $mybb->get_input('did', MyBB::INPUT_INT);
+
 			// Stylesheets Dropbox
 			$theme = [];
 			$sorted = [];
@@ -2620,9 +2628,6 @@ function designconfigurator_manage_designconfigurator() {
 				$theme[$tid] = $themes['name'];
 				$sorted[$tid] = $themes['name'];
 			}
-
-			// Get the data
-			$did = $mybb->get_input('did', MyBB::INPUT_INT);
 			$edit_query = $db->simple_select("designs", "*", "did={$did}");
 			$edit_accentcolor = $db->fetch_array($edit_query);
 
@@ -2635,7 +2640,7 @@ function designconfigurator_manage_designconfigurator() {
 			// Themen ID
 			$form_container->output_row(
 				$lang->designconfigurator_manage_design_designID_title."<em>*</em>",
-				$lang->designconfigurator_manage_accentcolor_designID__desc,
+				$lang->designconfigurator_manage_accentcolor_designID_desc,
 				$form->generate_select_box('tid', $sorted, $edit_accentcolor['tid'], array('id' => 'tid')),
 				'tid'
 			);
@@ -2790,15 +2795,20 @@ function designconfigurator_headerinclude() {
 	} else {
 		$style_id = $theme['tid'];
 	}
+	$saveurl = $_SERVER['REQUEST_URI']; 
 
-	// DESIGNNAME
-	$designname = $mybb->user['designname'];
-
-	// LIGHT/DARK
-	$designdimm = $mybb->user['designdimm'];
-
-	// AKTZENTFARBEN
-	$own_accentcolor = $mybb->user['individual_colors'];
+	if ($mybb->user['uid'] != 0) {	
+		// DESIGNNAME
+		$designname = $mybb->user['designname'];
+		// LIGHT/DARK
+		$designdimm = $mybb->user['designdimm'];
+		// AKTZENTFARBEN
+		$own_accentcolor = $mybb->user['individual_colors'];
+	} else {
+		$designname = "";
+		$designdimm = "";
+		$own_accentcolor = "";
+	}
 
 	// ARRAY BILDEN TIDs
 	$tid_query = $db->simple_select("designs", "tid");
@@ -3173,7 +3183,7 @@ function designconfigurator_usercpmenu() {
 // Seite im Usercp
 function designconfigurator_usercp() {
 
-	global $mybb, $db, $plugins, $templates, $theme, $lang, $header, $headerinclude, $footer, $usercpnav, $accentcolors_own, $designswitch, $designswitch_link, $avtive_design, $mode_option, $lightdarkmode, $accentcolors;
+	global $mybb, $db, $plugins, $templates, $theme, $lang, $header, $headerinclude, $footer, $usercpnav, $accentcolors_own, $designswitch, $designswitch_link, $avtive_design, $mode_option, $lightdarkmode, $accentcolors, $accentcolors_add, $color_own;
 
 	// SPRACHDATEI LADEN
 	$lang->load("designconfigurator");
@@ -3235,7 +3245,7 @@ function designconfigurator_usercp() {
                 WHERE tid = '".$style_id."'
 				AND allowed_usergroups = 'all' OR (concat(',',allowed_usergroups,',') LIKE '%,".$usergroup.",%') 
 				$additionalgroups_sql
-                ORDER BY name ASC
+				ORDER BY name ASC
                 ");
 
 				// Headerbildchen auslesen lassen
@@ -3561,7 +3571,7 @@ function designconfigurator_usercp() {
 		}
 
 		// Farb-/Headerkombination wechseln
-		$designswitch_name = $mybb->input['designswitch'];
+		$designswitch_name = $mybb->get_input('designswitch');
 		if ($designswitch_name) {
 
 			$update_designame = [
@@ -3575,7 +3585,7 @@ function designconfigurator_usercp() {
 		}
 
 		// Light-/Dark wechseln
-		$modeswitch = $mybb->input['designdimm'];
+		$modeswitch = $mybb->get_input('designdimm');
 		if ($modeswitch) {
 
 			if ($modeswitch == "light") {
@@ -3595,25 +3605,29 @@ function designconfigurator_usercp() {
 
 		}
 
+
 		// Light-/Dark wechseln - Global Button
-		$indexswitch = $mybb->input['indexdimm'];
-		if ($indexswitch) {
+		//wurde der button gedrückt? 
+		if(isset($mybb->input['send_indexdimm'])) {
+			$indexswitch = $mybb->get_input('indexdimm');
+			if ($indexswitch) {
 
-			if ($indexswitch == "light") {
-				$indexswitch = "1";
+				if ($indexswitch == "light") {
+					$indexswitch = "1";
+				}
+				if ($indexswitch == "dark") {
+					$indexswitch = "2";
+				}
+
+				$update_indexswitchdimm = [
+					"designdimm" => $db->escape_string($indexswitch)
+				];
+
+				$db->update_query("users", $update_indexswitchdimm, "uid = '".$user_id."'");
+
+				redirect($mybb->get_input('saveurl'), $lang->designconfigurator_redirect_designdimm);
+
 			}
-			if ($indexswitch == "dark") {
-				$indexswitch = "2";
-			}
-
-			$update_indexswitchdimm = [
-				"designdimm" => $db->escape_string($indexswitch)
-			];
-
-			$db->update_query("users", $update_indexswitchdimm, "uid = '".$user_id."'");
-
-			redirect($mybb->input['saveurl'], $lang->designconfigurator_redirect_designdimm);
-
 		}
 
 		// TEMPLATE FÜR DIE SEITE
