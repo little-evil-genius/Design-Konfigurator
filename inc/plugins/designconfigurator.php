@@ -3195,7 +3195,12 @@ function designconfigurator_usercp() {
 	$user_id = $mybb->user['uid'];
 
 	// STYLE ID
-	$style_id = $mybb->user['style'];
+	if($mybb->user['style'] != 0) {
+		$style_id = $mybb->user['style'];
+	} else {
+		// Default Design
+		$style_id = $db->fetch_field($db->simple_select("themes", "tid", "def = '1'"), "tid");
+	}
 
 	// DESIGNNAME
 	$designname = $mybb->user['designname'];
