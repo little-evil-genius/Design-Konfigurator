@@ -2791,7 +2791,12 @@ function designconfigurator_headerinclude() {
 
 	// STYLE ID
 	if ($mybb->user['uid'] != 0) {
-		$style_id = $mybb->user['style'];
+		if($mybb->user['style'] != 0) {
+			$style_id = $mybb->user['style'];
+		} else {
+			// Default Design
+			$style_id = $db->fetch_field($db->simple_select("themes", "tid", "def = '1'"), "tid");
+		}
 	} else {
 		$style_id = $theme['tid'];
 	}
