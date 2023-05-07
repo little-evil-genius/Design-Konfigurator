@@ -62,9 +62,9 @@ Auf der Übersichtsseite der Designs mit Akzentfarbe(n) wird der Designname und 
 <b>Beispiel</b><br>
 Dank den zwei lieben Adminas (Nathalie & Michelle) vom <a href="https://toofastforfreedom.de/">too fast for freedom</a>, die auch ein Design mit individuellen Akzentfarben haben, habe ich auch ein Beispiel für diese Designoption. <br>
 Standardmäßig hat das Design eine hellblaue Aktzentfarbe
-<img src="https://abload.de/img/screenshot2022-12-28af2il4.png"> <br>
+<img src="https://stormborn.at/plugins/designkonfigurator_beispielFarbe1.png"><br>
 Nach einer individuellen Anpassung hat das Design nun eine grüne Aktzentfarbe
-<img src="https://abload.de/img/screenshot2022-12-28agodhw.png"> 
+<img src="https://stormborn.at/plugins/designkonfigurator_beispielFarbe2.png"> 
 
 # Design Konfiguration im User-CP
 Die Verwaltung vom Design habe ich ins User-CP verlegt. Dort findet ihr erstmal den Platz, um euren Usern zu erklären, wie das ganze Prinzip der persönlichen Anpassungen funktioniert. Den habe ich nicht vorgeschrieben, da es so individuell geschrieben werden kann, dass es jedes Team selbst schreiben muss. :D<br>
@@ -142,23 +142,22 @@ Die Darstellung der Auswahl der Farb-/Headervarianten habe ich mir vom Storming 
 
 # Demo
 <b>ACP - Farb- und Headervarianten</b>
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-ey-3c2b.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-f0-d982.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-f1-353b.png">
-<br><br>
+<img src="https://stormborn.at/plugins/designkonfigurator_acp_kombi_uebersicht.png">
+<img src="https://stormborn.at/plugins/designkonfigurator_acp_kombi_add.png">
+<img src="https://stormborn.at/plugins/designkonfigurator_acp_kombi_add2.png">
+
 <b>ACP - Light-/Darkmodus</b>
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-em-cf1a.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-en-2a3d.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-en-2a3d.png">
-<br><br>
+<img src="https://stormborn.at/plugins/designkonfigurator_acp_lightdark_uebersicht.png">
+<img src="https://stormborn.at/plugins/designkonfigurator_acp_lightdark_add.png">
+
 <b>ACP - Design-Akzentfarbe(n)</b>
-<img src="https://www.bilder-hochladen.net/files/m4bn-es-4b2b.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-et-be21.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-eu-9ce0.png">
-<br><br>
+<img src="https://stormborn.at/plugins/designkonfigurator_acp_farbe_uebersicht.png">
+<img src="https://stormborn.at/plugins/designkonfigurator_acp_farbe_add.png">
+<img src="https://stormborn.at/plugins/designkonfigurator_acp_farbe_edit.png">
+
 <b>USER-CP</b>
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-er-2864.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-ep-fdf1.png">
-<img src="https://www.bilder-hochladen.net/files/big/m4bn-eq-bdb2.png">
-<img src="https://www.bilder-hochladen.net/files/m4bn-ev-6e85.png">
-<img src="https://www.bilder-hochladen.net/files/m4bn-ew-de40.png">
+<img src="https://stormborn.at/plugins/designkonfigurator_upc_lightdark.png">
+<img src="https://stormborn.at/plugins/designkonfigurator_upc_kombi.png">
+<img src="https://stormborn.at/plugins/designkonfigurator_upc_kombi2.png">
+<img src="https://stormborn.at/plugins/designkonfigurator_upc_farbe.png">
+<img src="https://stormborn.at/plugins/designkonfigurator_upc_farbe2.png">
