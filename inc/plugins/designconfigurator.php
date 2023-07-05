@@ -28,7 +28,7 @@ function designconfigurator_info() {
 		"website" => "https://github.com/little-evil-genius/Design-Konfigurator",
 		"author" => "little.evil.genius",
 		"authorsite" => "https://storming-gates.de/member.php?action=profile&uid=1712",
-		"version" => "1.2",
+		"version" => "1.3",
 		"compatibility" => "18*"
 	);
 }
@@ -3689,9 +3689,11 @@ function designconfigurator_usercp() {
 // Werte löschen, wenn Style geändert wird
 function designconfigurator_userupdate(&$datahandler) {
 
-	global $db, $user;
+	global $db, $user, $mybb;
 
-	if ($datahandler->user_update_data['style']) {
+	$old_user = get_user($user['uid']);
+
+	if(isset($mybb->input['theme'])){
 
 		$update_designconfi = [
 			"designname" => '',
