@@ -3508,7 +3508,7 @@ function designconfigurator_usercp() {
 							$lightdarkmode_active_light = "";
 							$lightdarkmode_active_dark = "style=\"opacity: 0.5;\"";
 
-							$lightdarkmode_link_light = "<a href=\"usercp.php?action=designconfigurator&designdimm=light\">".$lang->designconfigurator_lightdark_link_light."";
+							$lightdarkmode_link_light = "<a href=\"usercp.php?action=designconfigurator&designdimm=light\">".$lang->designconfigurator_lightdark_link_light."</a>";
 							$lightdarkmode_link_dark = $lang->designconfigurator_lightdark_link_dark;
 						}
 					}
