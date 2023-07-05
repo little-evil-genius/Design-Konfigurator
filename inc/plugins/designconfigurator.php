@@ -3691,8 +3691,6 @@ function designconfigurator_userupdate(&$datahandler) {
 
 	global $db, $user, $mybb;
 
-	$old_user = get_user($user['uid']);
-
 	if(isset($mybb->input['theme'])){
 
 		$update_designconfi = [
