@@ -13,6 +13,7 @@ $plugins->add_hook('global_intermediate', 'designconfigurator_headerinclude', 0)
 $plugins->add_hook('usercp_start', 'designconfigurator_usercp');
 $plugins->add_hook('usercp_menu', 'designconfigurator_usercpmenu', 40);
 $plugins->add_hook('datahandler_user_update', 'designconfigurator_userupdate');
+$plugins->add_hook('usercp_do_options_end', 'designconfigurator_userupdate');
 $plugins->add_hook("fetch_wol_activity_end", "designconfigurator_online_activity");
 $plugins->add_hook("build_friendly_wol_location_end", "designconfigurator_online_location");
 // MyAlerts
@@ -28,7 +29,7 @@ function designconfigurator_info() {
 		"website" => "https://github.com/little-evil-genius/Design-Konfigurator",
 		"author" => "little.evil.genius",
 		"authorsite" => "https://storming-gates.de/member.php?action=profile&uid=1712",
-		"version" => "1.3",
+		"version" => "1.2",
 		"compatibility" => "18*"
 	);
 }
@@ -3691,7 +3692,7 @@ function designconfigurator_userupdate(&$datahandler) {
 
 	global $db, $user, $mybb;
 
-	if(isset($mybb->input['theme'])){
+	if(isset($mybb->input['theme']) OR isset($mybb->input['regsubmit'])){
 
 		$update_designconfi = [
 			"designname" => '',
