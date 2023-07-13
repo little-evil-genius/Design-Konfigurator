@@ -647,11 +647,10 @@ function designconfigurator_manage_designconfigurator() {
 			"), 'designs');
 			
         
-			$mybb->input['perpage'] = $mybb->get_input('perpage', MyBB::INPUT_INT);
-            if ($mybb->input['perpage'] > 0 && $mybb->input['perpage'] <= 50) {
-                $perpage = $mybb->input['perpage'];
-            } else {
-                $perpage = $mybb->input['perpage'] = 10;
+			$default_perpage = 10;
+            $perpage = $mybb->get_input('perpage', MyBB::INPUT_INT);
+            if(!$perpage){
+                $perpage = $default_perpage;
             }
 
 			// Page
