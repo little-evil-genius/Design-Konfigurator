@@ -3691,7 +3691,7 @@ function designconfigurator_userupdate(&$datahandler) {
 
 	global $db, $user, $mybb;
 
-	if(isset($mybb->input['theme']) OR isset($mybb->input['regsubmit'])){
+	if(isset($mybb->input['theme'])){
 
 		$update_designconfi = [
 			"designname" => '',
