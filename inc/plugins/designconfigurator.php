@@ -3221,7 +3221,8 @@ function designconfigurator_usercp() {
 	$additionalgroups  = $mybb->user['additionalgroups'];
 
 	if ($mybb->input['action'] == "designconfigurator") {
-
+		
+	add_breadcrumb($lang->nav_usercp, "usercp.php");
         add_breadcrumb($lang->designconfigurator_usercp, "usercp.php?action=designconfigurator");
 
 		// ARRAY BILDEN TIDs
