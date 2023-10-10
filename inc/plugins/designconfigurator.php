@@ -3159,7 +3159,19 @@ function designconfigurator_headerinclude() {
 
 					$root_accentcolor = "--accent".$number.": ".$individualcolor.";";
 
-					$allroot_colors .= $root_accentcolor."\n";
+					// RGB FARBEN
+					list($r, $g, $b) = sscanf($individualcolor, "#%02x%02x%02x");
+					$rgb_color = "$r $g $b";
+				
+					$opacity  = 0;
+					$root_accentcolor_rgb = "";
+					for ($i = 0; $i < 9; $i++) {
+						$opacity  ++;
+						$root_accentcolor_rgb .= "--accent".$number."_rgb".$opacity .": rgb(".$rgb_color."/ 0.".$opacity .");\n";
+				
+					}
+
+					$allroot_colors .= $root_accentcolor."\n".$root_accentcolor_rgb."\n";
 				}
 
 			}
@@ -3222,7 +3234,7 @@ function designconfigurator_usercp() {
 
 	if ($mybb->input['action'] == "designconfigurator") {
 		
-	add_breadcrumb($lang->nav_usercp, "usercp.php");
+		add_breadcrumb($lang->nav_usercp, "usercp.php");
         add_breadcrumb($lang->designconfigurator_usercp, "usercp.php?action=designconfigurator");
 
 		// ARRAY BILDEN TIDs
