@@ -1,7 +1,7 @@
 <?php
 $l['designconfigurator_usercp'] = "Design Konfiguration";
 $l['designconfigurator_usercpmenu_nav'] = "Design anpassen";
-$l['designconfigurator_usercp_desc'] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+$l['designconfigurator_usercp_desc'] = "Hier kannst du dein Design anpassen, eigenen Farben auswählen und dich vollkommen austoben. Aber natürlich musst du vorsichtig sein, dass alles noch lesbar bleibt und ist. Viel Spaß beim ausprobieren.";
 $l['designconfigurator_usercp_mode'] = "Light- und Darkmodus";
 $l['designconfigurator_usercp_design'] = "Header-/Farbkombination";
 $l['designconfigurator_usercp_accentcolors'] = "individuelle Anpassungen";
