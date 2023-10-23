@@ -3645,6 +3645,12 @@ function designconfigurator_usercp() {
 			else {
 				// Default Modus
 				$designdimm = $db->fetch_field($db->simple_select("designs", "root", "tid = '".$style_id."'"), "root");
+				if ($designdimm == "light") {
+					$designdimm = "1";
+				}
+				if ($designdimm == "dark") {
+					$designdimm = "2";
+				}
 				$individual_colors = "";
 
 				// Daten speichern
@@ -3860,12 +3866,6 @@ function designconfigurator_usercp() {
 		// letztes Komma und Leerzeichen vom Farb-String entfernen
 		$allcolors_string = substr($allcolors, 0, -2);
 
-		$new_colors = [
-			"individual_colors" => $db->escape_string($allcolors_string),
-		];
-
-		$db->update_query("users", $new_colors, "uid = '{$user_id}'");
-
 		// Überprüfen, ob für diesen Style und User schon Werte gespeichert wurden
 		$count_design = $db->num_rows($db->query("SELECT duid FROM ".TABLE_PREFIX."designs_users
 		WHERE uid = '".$user_id."'
@@ -3885,6 +3885,12 @@ function designconfigurator_usercp() {
 			// Default Modus
 			$designname = "";
 			$designdimm = $db->fetch_field($db->simple_select("designs", "root", "tid = '".$style_id."'"), "root");
+			if ($designdimm == "light") {
+				$designdimm = "1";
+			}
+			if ($designdimm == "dark") {
+				$designdimm = "2";
+			}
 			$individual_colors = $allcolors_string;
 
 			// Daten speichern
@@ -4052,7 +4058,7 @@ function designconfigurator_misc() {
 				`uid` int(10) unsigned NOT NULL,
 				`style` int(10) unsigned NOT NULL,
 				`designname` varchar(500) COLLATE utf8_general_ci NOT NULL,
-				`designdimm` int(1) NOT NULL DEFAULT 0,
+				`designdimm` varchar(1) COLLATE utf8_general_ci NOT NULL,
 				`individual_colors` varchar(500) COLLATE utf8_general_ci NOT NULL,
 				PRIMARY KEY(`duid`),
 				KEY `duid` (`duid`)
@@ -4145,7 +4151,7 @@ function designconfigurator_misc() {
 					"uid" => (int)$uid,
 					"style" => (int)$style_id,
 					"designname" => $db->escape_string($designname),
-					"designdimm" => (int)$designdimm_user,
+					"designdimm" => $db->escape_string($designdimm_user),
 					"individual_colors" => $db->escape_string($individual_colors)
 				);                    
 				
