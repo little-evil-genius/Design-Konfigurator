@@ -83,11 +83,7 @@ Damit die Admins im ACP die neue Seite sehen und verwalten können, müssen die 
 # Datenbank-Änderungen
 hinzugefügte Tabelle:
 - PRÄFIX_designs
-
-hinzugefügte Spalten in der Tabelle PRÄFIX_users:
-- designname
-- designdimm
-- individual_colors
+- PRÄFIX_designs_users
 
 # Neue Template-Gruppe innerhalb der Design-Templates
 - Design Konfigurator
