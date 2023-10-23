@@ -9,11 +9,10 @@ $plugins->add_hook("admin_style_action_handler", "designconfigurator_admin_style
 $plugins->add_hook("admin_style_permissions", "designconfigurator_admin_style_permissions");
 $plugins->add_hook("admin_style_menu", "designconfigurator_admin_style_menu");
 $plugins->add_hook("admin_load", "designconfigurator_manage_designconfigurator");
-$plugins->add_hook('global_intermediate', 'designconfigurator_headerinclude', 0);
+$plugins->add_hook('global_intermediate', 'designconfigurator_headerinclude');
 $plugins->add_hook('usercp_start', 'designconfigurator_usercp');
 $plugins->add_hook('usercp_menu', 'designconfigurator_usercpmenu', 40);
-$plugins->add_hook('datahandler_user_update', 'designconfigurator_userupdate');
-$plugins->add_hook('usercp_do_options_end', 'designconfigurator_userupdate');
+$plugins->add_hook("admin_user_users_delete_commit_end", "designconfigurator_user_delete");
 $plugins->add_hook("fetch_wol_activity_end", "designconfigurator_online_activity");
 $plugins->add_hook("build_friendly_wol_location_end", "designconfigurator_online_location");
 // MyAlerts
@@ -29,7 +28,7 @@ function designconfigurator_info() {
 		"website" => "https://github.com/little-evil-genius/Design-Konfigurator",
 		"author" => "little.evil.genius",
 		"authorsite" => "https://storming-gates.de/member.php?action=profile&uid=1712",
-		"version" => "1.4",
+		"version" => "1.5",
 		"compatibility" => "18*"
 	);
 }
@@ -38,12 +37,8 @@ function designconfigurator_info() {
 function designconfigurator_install() {
 	global $db, $cache, $mybb;
 
-	// DATENBANKSPALTE USERS
-	$db->query("ALTER TABLE `".TABLE_PREFIX."users` ADD `designname` VARCHAR(500) COLLATE utf8_general_ci NOT NULL;");
-	$db->query("ALTER TABLE `".TABLE_PREFIX."users` ADD `designdimm` VARCHAR(1) COLLATE utf8_general_ci  NOT NULL;");
-	$db->query("ALTER TABLE `".TABLE_PREFIX."users` ADD `individual_colors` VARCHAR(500) COLLATE utf8_general_ci  NOT NULL;");
-
-	// DATENBANK HINZUFÜGEN
+	// DATENBANKEN HINZUFÜGEN
+	// die einzelnen Designs
 	$db->query("CREATE TABLE ".TABLE_PREFIX."designs(
         `did` int(10) NOT NULL AUTO_INCREMENT,
         `tid` int(10) NOT NULL,
@@ -60,6 +55,20 @@ function designconfigurator_install() {
 		`allowed_usergroups` varchar(500) COLLATE utf8_general_ci NOT NULL,
 		PRIMARY KEY(`did`),
         KEY `did` (`did`)
+        )
+        ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1
+    ");
+
+	// User Daten
+	$db->query("CREATE TABLE ".TABLE_PREFIX."designs_users(
+        `duid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+        `uid` int(10) unsigned NOT NULL,
+        `style` int(10) unsigned NOT NULL,
+        `designname` varchar(500) COLLATE utf8_general_ci NOT NULL,
+        `designdimm` varchar(1) COLLATE utf8_general_ci NOT NULL,
+        `individual_colors` varchar(500) COLLATE utf8_general_ci NOT NULL,
+		PRIMARY KEY(`duid`),
+        KEY `duid` (`duid`)
         )
         ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1
     ");
@@ -433,7 +442,7 @@ function designconfigurator_install() {
 function designconfigurator_is_installed() {
 	global $db, $mybb;
 
-	if ($db->field_exists("designname", "users")) {
+	if ($db->table_exists("designs")) {
 		return true;
 	}
 	return false;
@@ -447,17 +456,8 @@ function designconfigurator_uninstall() {
 	if ($db->table_exists("designs")) {
 		$db->drop_table("designs");
 	}
-	// DATENBANK SPALTEN LÖSCHEN
-	if ($db->field_exists("designname", "users")) {
-		$db->drop_column("users", "designname");
-	}
-
-	if ($db->field_exists("designdimm", "users")) {
-		$db->drop_column("users", "designdimm");
-	}
-
-	if ($db->field_exists("individual_colors", "users")) {
-		$db->drop_column("users", "individual_colors");
+	if ($db->table_exists("designs_users")) {
+		$db->drop_table("designs_users");
 	}
 
     // TEMPLATGRUPPE LÖSCHEN
@@ -2802,13 +2802,23 @@ function designconfigurator_headerinclude() {
 	}
 	$saveurl = $_SERVER['REQUEST_URI']; 
 
-	if ($mybb->user['uid'] != 0) {	
-		// DESIGNNAME
-		$designname = $mybb->user['designname'];
-		// LIGHT/DARK
-		$designdimm = $mybb->user['designdimm'];
-		// AKTZENTFARBEN
-		$own_accentcolor = $mybb->user['individual_colors'];
+	if ($mybb->user['uid'] != 0) {
+		// Update ausgeführt?
+		if (!$db->table_exists("designs_users")) {
+			// DESIGNNAME
+			$designname = $mybb->user['designname'];
+			// LIGHT/DARK
+			$designdimm = $mybb->user['designdimm'];
+			// AKTZENTFARBEN
+			$own_accentcolor = $mybb->user['individual_colors'];
+		} else {
+			// DESIGNNAME
+			$designname = $db->fetch_field($db->simple_select("designs_users", "designname", "style = '".$style_id."' AND uid = '".$mybb->user['uid']."'"), "designname");
+			// LIGHT/DARK
+			$designdimm =$db->fetch_field($db->simple_select("designs_users", "designdimm", "style = '".$style_id."' AND uid = '".$mybb->user['uid']."'"), "designdimm");
+			// AKTZENTFARBEN
+			$own_accentcolor = $db->fetch_field($db->simple_select("designs_users", "individual_colors", "style = '".$style_id."' AND uid = '".$mybb->user['uid']."'"), "individual_colors");
+		}
 	} else {
 		$designname = "";
 		$designdimm = "";
@@ -3209,7 +3219,7 @@ function designconfigurator_usercpmenu() {
 // Seite im Usercp
 function designconfigurator_usercp() {
 
-	global $mybb, $db, $plugins, $templates, $theme, $lang, $header, $headerinclude, $footer, $usercpnav, $accentcolors_own, $designswitch, $designswitch_link, $avtive_design, $mode_option, $lightdarkmode, $accentcolors, $accentcolors_add, $color_own;
+	global $mybb, $db, $plugins, $page, $templates, $theme, $lang, $header, $headerinclude, $footer, $usercpnav, $accentcolors_own, $designswitch, $designswitch_link, $avtive_design, $mode_option, $lightdarkmode, $accentcolors, $accentcolors_add, $color_own;
 
 	// SPRACHDATEI LADEN
 	$lang->load("designconfigurator");
@@ -3228,14 +3238,23 @@ function designconfigurator_usercp() {
 		$style_id = $db->fetch_field($db->simple_select("themes", "tid", "def = '1'"), "tid");
 	}
 
-	// DESIGNNAME
-	$designname = $mybb->user['designname'];
-
-	// LIGHT/DARK
-	$designdimm = $mybb->user['designdimm'];
-
-	// AKTZENTFARBEN
-	$own_accentcolor = $mybb->user['individual_colors'];
+	// Update ausgeführt?
+	if (!$db->table_exists("designs_users")) {
+		if($mybb->usergroup['cancp'] == 1) {
+			error("Das Plugin 'Design Konfigurator' muss geupdatet werden! Rufe dafür BOARDLINK/designconfigurator_update.php auf.");	
+			return;
+		} else {
+			error("Das Plugin 'Design Konfigurator' muss geupdatet werden! Sag deinem Team bescheid dafür.");	
+			return;
+		}
+	} else {
+		// DESIGNNAME
+		$designname = $db->fetch_field($db->simple_select("designs_users", "designname", "style = '".$style_id."' AND uid = '".$mybb->user['uid']."'"), "designname");
+		// LIGHT/DARK
+		$designdimm =$db->fetch_field($db->simple_select("designs_users", "designdimm", "style = '".$style_id."' AND uid = '".$mybb->user['uid']."'"), "designdimm");
+		// AKTZENTFARBEN
+		$own_accentcolor = $db->fetch_field($db->simple_select("designs_users", "individual_colors", "style = '".$style_id."' AND uid = '".$mybb->user['uid']."'"), "individual_colors");
+	}
 
 	// BENUTZERGRUPPEN
 	$usergroup = $mybb->user['usergroup'];
@@ -3606,11 +3625,37 @@ function designconfigurator_usercp() {
 		$designswitch_name = $mybb->get_input('designswitch');
 		if ($designswitch_name) {
 
-			$update_designame = [
-				"designname" => $db->escape_string($designswitch_name)
-			];
+			// Überprüfen, ob für diesen Style und User schon Werte gespeichert wurden
+			$count_design = $db->num_rows($db->query("SELECT duid FROM ".TABLE_PREFIX."designs_users
+			WHERE uid = '".$user_id."'
+			AND style = '".$style_id."'
+			"));
 
-			$db->update_query("users", $update_designame, "uid = '".$user_id."'");
+			// Vorhanden 
+			if ($count_design > 0) {
+				$update_designame = [
+					"designname" => $db->escape_string($designswitch_name)
+				];
+	
+				$db->update_query("designs_users", $update_designame, "uid = '".$user_id."' AND style = '".$style_id."'");
+			}
+			// noch kein Wert 
+			else {
+				// Default Modus
+				$designdimm = $db->fetch_field($db->simple_select("designs", "root", "tid = '".$style_id."'"), "root");
+				$individual_colors = "";
+
+				// Daten speichern
+				$new_designname = array(
+					"uid" => (int)$user_id,
+					"style" => (int)$style_id,
+					"designname" => $db->escape_string($designswitch_name),
+					"designdimm" => $db->escape_string($designdimm),
+					"individual_colors" => $db->escape_string($individual_colors)
+				);                    
+				
+				$db->insert_query("designs_users", $new_designname);
+			}
 
 			redirect("usercp.php?action=designconfigurator", $lang->designconfigurator_redirect_designswitch);
 
@@ -3620,6 +3665,10 @@ function designconfigurator_usercp() {
 		$modeswitch = $mybb->get_input('designdimm');
 		if ($modeswitch) {
 
+			// Rausfinden, was der Style für ne Option hat
+			$designoption_header = $db->fetch_field($db->simple_select("designs", "headerimage", "tid = '".$style_id."'"), "headerimage");
+			$designoption_individualcolors = $db->fetch_field($db->simple_select("designs", "individual_colors", "tid = '".$style_id."'"), "individual_colors");
+
 			if ($modeswitch == "light") {
 				$modeswitch = "1";
 			}
@@ -3627,16 +3676,70 @@ function designconfigurator_usercp() {
 				$modeswitch = "2";
 			}
 
-			$update_designdimm = [
-				"designdimm" => $db->escape_string($modeswitch)
-			];
+			// Überprüfen, ob für diesen Style und User schon Werte gespeichert wurden
+			$count_design = $db->num_rows($db->query("SELECT duid FROM ".TABLE_PREFIX."designs_users
+			WHERE uid = '".$user_id."'
+			AND style = '".$style_id."'
+			"));
 
-			$db->update_query("users", $update_designdimm, "uid = '".$user_id."'");
+			// Vorhanden 
+			if ($count_design > 0) {
+				$update_designdimm = [
+					"designdimm" => $db->escape_string($modeswitch)
+				];
+	
+				$db->update_query("designs_users", $update_designdimm, "uid = '".$user_id."' AND style = '".$style_id."'");
+			}
+			// noch kein Wert 
+			else {
+
+				// Headerimage = Farb-/Headerwechsel
+				if (!empty($designoption_header) AND empty($designoption_individualcolors)) {
+
+					// Standard Design
+					$count_default = $db->num_rows($db->query("SELECT did FROM ".TABLE_PREFIX."designs
+					WHERE tid = '".$style_id."'
+					AND standard = '1'
+					"));
+	
+					// Team hat vergessen eine Standardvariante zu setzen
+					if ($count_default < 1) {
+						// Erste Variante => did am kleinsten
+						$default_did = $db->fetch_field($db->simple_select("designs", "did", "tid = '".$style_id."'", ["order_dir" => "ASC", "order_by" => "did", "limit" => "1"]), "did");
+						$default_design = $db->fetch_field($db->simple_select("designs", "name", "did = '".$default_did."'"), "name");
+					} else {
+						// Standard-Modus
+						$default_design = $db->fetch_field($db->simple_select("designs", "name", "tid = '".$style_id."' AND standard = '1'"), "name");
+					}
+					$designname = $default_design;
+					$individual_colors = "";
+				}
+				// Light/Dark Design
+				else if (empty($designoption_header) AND empty($designoption_individualcolors)) {
+					$designname = "";
+					$individual_colors = "";
+				}
+				// Aktzentfarbe
+				else if (empty($designoption_header) AND !empty($designoption_individualcolors)) {
+					$designname = "";
+					$individual_colors = $db->fetch_field($db->simple_select("designs", "individual_colors", "tid = '".$style_id."'"), "individual_colors");
+				}
+
+				// Daten speichern
+				$new_designdimm = array(
+					"uid" => (int)$user_id,
+					"style" => (int)$style_id,
+					"designname" => $db->escape_string($designname),
+					"designdimm" => $db->escape_string($modeswitch),
+					"individual_colors" => $db->escape_string($individual_colors)
+				);                    
+				
+				$db->insert_query("designs_users", $new_designdimm);
+			}
 
 			redirect("usercp.php?action=designconfigurator", $lang->designconfigurator_redirect_designdimm);
 
 		}
-
 
 		// Light-/Dark wechseln - Global Button
 		//wurde der button gedrückt? 
@@ -3651,11 +3754,70 @@ function designconfigurator_usercp() {
 					$indexswitch = "2";
 				}
 
-				$update_indexswitchdimm = [
-					"designdimm" => $db->escape_string($indexswitch)
-				];
+				// Rausfinden, was der Style für ne Option hat
+				$designoption_header = $db->fetch_field($db->simple_select("designs", "headerimage", "tid = '".$style_id."'"), "headerimage");
+				$designoption_individualcolors = $db->fetch_field($db->simple_select("designs", "individual_colors", "tid = '".$style_id."'"), "individual_colors");	
 
-				$db->update_query("users", $update_indexswitchdimm, "uid = '".$user_id."'");
+				// Überprüfen, ob für diesen Style und User schon Werte gespeichert wurden
+				$count_design = $db->num_rows($db->query("SELECT duid FROM ".TABLE_PREFIX."designs_users
+				WHERE uid = '".$user_id."'
+				AND style = '".$style_id."'
+				"));
+	
+				// Vorhanden 
+				if ($count_design > 0) {
+					$update_indexdimm = [
+						"designdimm" => $db->escape_string($indexswitch)
+					];
+		
+					$db->update_query("designs_users", $update_indexdimm, "uid = '".$user_id."' AND style = '".$style_id."'");
+				}
+				// noch kein Wert 
+				else {
+	
+					// Headerimage = Farb-/Headerwechsel
+					if (!empty($designoption_header) AND empty($designoption_individualcolors)) {
+	
+						// Standard Design
+						$count_default = $db->num_rows($db->query("SELECT did FROM ".TABLE_PREFIX."designs
+						WHERE tid = '".$style_id."'
+						AND standard = '1'
+						"));
+		
+						// Team hat vergessen eine Standardvariante zu setzen
+						if ($count_default < 1) {
+							// Erste Variante => did am kleinsten
+							$default_did = $db->fetch_field($db->simple_select("designs", "did", "tid = '".$style_id."'", ["order_dir" => "ASC", "order_by" => "did", "limit" => "1"]), "did");
+							$default_design = $db->fetch_field($db->simple_select("designs", "name", "did = '".$default_did."'"), "name");
+						} else {
+							// Standard-Modus
+							$default_design = $db->fetch_field($db->simple_select("designs", "name", "tid = '".$style_id."' AND standard = '1'"), "name");
+						}
+						$designname = $default_design;
+						$individual_colors = "";
+					}
+					// Light/Dark Design
+					else if (empty($designoption_header) AND empty($designoption_individualcolors)) {
+						$designname = "";
+						$individual_colors = "";
+					}
+					// Aktzentfarbe
+					else if (empty($designoption_header) AND !empty($designoption_individualcolors)) {
+						$designname = "";
+						$individual_colors = $db->fetch_field($db->simple_select("designs", "individual_colors", "tid = '".$style_id."'"), "individual_colors");
+					}
+	
+					// Daten speichern
+					$new_indexdimm = array(
+						"uid" => (int)$user_id,
+						"style" => (int)$style_id,
+						"designname" => $db->escape_string($designname),
+						"designdimm" => $db->escape_string($indexswitch),
+						"individual_colors" => $db->escape_string($individual_colors)
+					);                    
+					
+					$db->insert_query("designs_users", $new_indexdimm);
+				}
 
 				redirect($mybb->get_input('saveurl'), $lang->designconfigurator_redirect_designdimm);
 
@@ -3702,27 +3864,54 @@ function designconfigurator_usercp() {
 
 		$db->update_query("users", $new_colors, "uid = '{$user_id}'");
 
-		redirect("usercp.php?action=designconfigurator", $lang->designconfigurator_redirect_accentcolor);
+		// Überprüfen, ob für diesen Style und User schon Werte gespeichert wurden
+		$count_design = $db->num_rows($db->query("SELECT duid FROM ".TABLE_PREFIX."designs_users
+		WHERE uid = '".$user_id."'
+		AND style = '".$style_id."'
+		"));
 
+		// Vorhanden 
+		if ($count_design > 0) {
+			$update_colors = [
+				"individual_colors" => $db->escape_string($allcolors_string)
+			];
+
+			$db->update_query("designs_users", $update_colors, "uid = '".$user_id."' AND style = '".$style_id."'");
+		}
+		// noch kein Wert 
+		else {
+			// Default Modus
+			$designname = "";
+			$designdimm = $db->fetch_field($db->simple_select("designs", "root", "tid = '".$style_id."'"), "root");
+			$individual_colors = $allcolors_string;
+
+			// Daten speichern
+			$new_colors = array(
+				"uid" => (int)$user_id,
+				"style" => (int)$style_id,
+				"designname" => $db->escape_string($designname),
+				"designdimm" => $db->escape_string($designdimm),
+				"individual_colors" => $db->escape_string($individual_colors)
+			);                    
+			
+			$db->insert_query("designs_users", $new_colors);
+		}
+
+		redirect("usercp.php?action=designconfigurator", $lang->designconfigurator_redirect_accentcolor);
 	}
 
 }
 
-// Werte löschen, wenn Style geändert wird
-function designconfigurator_userupdate(&$datahandler) {
+// User Werte löschen, wenn Account gelöscht wird
+function designconfigurator_user_delete() {
 
-	global $db, $user, $mybb;
+    global $db, $cache, $mybb, $user;
 
-	if(isset($mybb->input['theme'])){
+	// UID gelöschter Chara
+    $deleteAccount = (int)$user['uid'];
 
-		$update_designconfi = [
-			"designname" => '',
-			"individual_colors" => '',
-			"designdimm" => '',
-		];
-
-		$db->update_query("users", $update_designconfi, "uid = '".$user['uid']."'");
-	}
+	// Alle Einträge für den User löschen
+	$db->delete_query("designs_users", "uid = '".$deleteAccount."'");
 }
 
 // ONLINE ANZEIGE - WER IST WO
