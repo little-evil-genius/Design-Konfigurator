@@ -9,7 +9,7 @@ $plugins->add_hook("admin_style_action_handler", "designconfigurator_admin_style
 $plugins->add_hook("admin_style_permissions", "designconfigurator_admin_style_permissions");
 $plugins->add_hook("admin_style_menu", "designconfigurator_admin_style_menu");
 $plugins->add_hook("admin_load", "designconfigurator_manage_designconfigurator");
-$plugins->add_hook('global_intermediate', 'designconfigurator_headerinclude');
+$plugins->add_hook('global_intermediate', 'designconfigurator_headerinclude', 0);
 $plugins->add_hook('usercp_start', 'designconfigurator_usercp');
 $plugins->add_hook('usercp_menu', 'designconfigurator_usercpmenu', 40);
 $plugins->add_hook("admin_user_users_delete_commit_end", "designconfigurator_user_delete");
