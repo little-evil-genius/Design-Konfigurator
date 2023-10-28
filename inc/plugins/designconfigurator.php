@@ -680,6 +680,7 @@ function designconfigurator_manage_designconfigurator() {
 			LIMIT $start, $perpage
             ");
 
+			$defdesign = $db->fetch_field($db->simple_select("themes", "tid", "def = '1'"), "tid");
 			while ($designconfigurator_designs = $db->fetch_array($query_designs)) {
 
 				// Default Button
@@ -725,16 +726,26 @@ function designconfigurator_manage_designconfigurator() {
 				$form_container->output_cell('<center><strong>'.$mode.'</strong></center>');
 
 				// Anzahl Nutzer die den Style direkt ausgewählt haben
-				$count_userdircet = $db->fetch_field($db->query("SELECT COUNT(*) as count_user FROM ".TABLE_PREFIX."users
+				$count_userdircet = $db->fetch_field($db->query("SELECT COUNT(*) as count_user FROM ".TABLE_PREFIX."designs_users
                 WHERE style = '".$designconfigurator_designs['tid']."'
                 AND designname = '".$designconfigurator_designs['name']."'
                 "), 'count_user');
 
-				// Anzahl Nutzer die den Standardstyle nutzen
-				$count_userdef = $db->fetch_field($db->query("SELECT COUNT(*) as count_user FROM ".TABLE_PREFIX."users
-                WHERE style = '".$designconfigurator_designs['tid']."'
-                AND designname = ''
-                "), 'count_user');
+				if ($defdesign == $designconfigurator_designs['tid']) {
+					// Anzahl Nutzer die den Standardstyle nutzen 
+					$count_userdef = $db->fetch_field($db->query("SELECT COUNT(*) as count_user FROM ".TABLE_PREFIX."designs_users du
+					LEFT JOIN ".TABLE_PREFIX."users u ON u.uid = du.uid
+					WHERE u.style = '".$designconfigurator_designs['tid']."' OR u.style = '0'
+					AND du.designname = ''
+					"), 'count_user');
+				} else {
+					// Anzahl Nutzer die den Standardstyle nutzen 
+					$count_userdef = $db->fetch_field($db->query("SELECT COUNT(*) as count_user FROM ".TABLE_PREFIX."designs_users du
+					LEFT JOIN ".TABLE_PREFIX."users u ON u.uid = du.uid
+					WHERE u.style = '".$designconfigurator_designs['tid']."'
+					AND du.designname = ''
+					"), 'count_user');
+				}
 
 				// Wenn das Team vergessen hat ein Standard Design einzustellen
 				$count_default = $db->fetch_field($db->query("SELECT COUNT(*) as default_design FROM ".TABLE_PREFIX."designs
