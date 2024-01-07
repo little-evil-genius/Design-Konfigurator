@@ -30,7 +30,7 @@ function designconfigurator_info() {
 		"website" => "https://github.com/little-evil-genius/Design-Konfigurator",
 		"author" => "little.evil.genius",
 		"authorsite" => "https://storming-gates.de/member.php?action=profile&uid=1712",
-		"version" => "1.5",
+		"version" => "1.5.1",
 		"compatibility" => "18*"
 	);
 }
