@@ -4450,8 +4450,8 @@ function designconfigurator_is_updated() {
         $result = $db->fetch_array($query);
         $actual_collation = strtolower(trim($result['TABLE_COLLATION'] ?? ''));
         
-        $actual_collation = str_replace(['utf8mb3', 'utf8mb4'], 'utf8', $actual_collation);
-        $expected_collation = str_replace(['utf8mb3', 'utf8mb4'], 'utf8', $collation);
+        $actual_collation = str_replace('utf8mb3', 'utf8', $actual_collation);
+        $expected_collation = str_replace('utf8mb3', 'utf8', $collation);
 
         if ($actual_collation !== $expected_collation) {
             return false;
