@@ -5,6 +5,8 @@ if (!defined("IN_MYBB")) {
 }
 
 // HOOKS
+$plugins->add_hook('admin_rpgstuff_update_stylesheet', 'designconfigurator_admin_update_stylesheet');
+$plugins->add_hook('admin_rpgstuff_update_plugin', 'designconfigurator_admin_update_plugin');
 $plugins->add_hook("admin_style_action_handler", "designconfigurator_admin_style_action_handler");
 $plugins->add_hook("admin_style_permissions", "designconfigurator_admin_style_permissions");
 $plugins->add_hook("admin_style_menu", "designconfigurator_admin_style_menu");
@@ -30,414 +32,45 @@ function designconfigurator_info() {
 		"website" => "https://github.com/little-evil-genius/Design-Konfigurator",
 		"author" => "little.evil.genius",
 		"authorsite" => "https://storming-gates.de/member.php?action=profile&uid=1712",
-		"version" => "1.5.1",
+		"version" => "1.5.2",
 		"compatibility" => "18*"
 	);
 }
 
 // Diese Funktion wird aufgerufen, wenn das Plugin installiert wird (optional).
 function designconfigurator_install() {
-	global $db, $cache, $mybb;
+    
+    global $db, $lang;
+
+    // SPRACHDATEI
+    $lang->load("designconfigurator");
+
+    // RPG Stuff Modul muss vorhanden sein
+    if (!file_exists(MYBB_ADMIN_DIR."/modules/rpgstuff/module_meta.php")) {
+		flash_message($lang->designconfigurator_error_rpgstuff, 'error');
+		admin_redirect('index.php?module=config-plugins');
+	}
 
 	// DATENBANKEN HINZUFÜGEN
-	// die einzelnen Designs
-	$db->query("CREATE TABLE ".TABLE_PREFIX."designs(
-        `did` int(10) NOT NULL AUTO_INCREMENT,
-        `tid` int(10) NOT NULL,
-        `name` varchar(500) COLLATE utf8_general_ci NOT NULL,
-        `standard` int(1) NOT NULL DEFAULT 0,
-        `root` varchar(10) COLLATE utf8_general_ci NOT NULL,
-        `headerimage` varchar(500) COLLATE utf8_general_ci NOT NULL,
-        `accentcolor1` varchar(10) COLLATE utf8_general_ci NOT NULL,
-        `accentcolor2` varchar(10) COLLATE utf8_general_ci NOT NULL,
-        `light_root` longtext COLLATE utf8_general_ci NOT NULL,
-        `dark_root` longtext COLLATE utf8_general_ci NOT NULL,
-        `path` varchar(500) COLLATE utf8_general_ci NOT NULL,
-        `individual_colors` varchar(500) COLLATE utf8_general_ci NOT NULL,
-		`allowed_usergroups` varchar(500) COLLATE utf8_general_ci NOT NULL,
-		PRIMARY KEY(`did`),
-        KEY `did` (`did`)
-        )
-        ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1
-    ");
-
-	// User Daten
-	$db->query("CREATE TABLE ".TABLE_PREFIX."designs_users(
-        `duid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-        `uid` int(10) unsigned NOT NULL,
-        `style` int(10) unsigned NOT NULL,
-        `designname` varchar(500) COLLATE utf8_general_ci NOT NULL,
-        `designdimm` varchar(1) COLLATE utf8_general_ci NOT NULL,
-        `individual_colors` varchar(500) COLLATE utf8_general_ci NOT NULL,
-		PRIMARY KEY(`duid`),
-        KEY `duid` (`duid`)
-        )
-        ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1
-    ");
+    designconfigurator_database();
 
 	// TEMPLATES ERSTELLEN
 	// Template Gruppe für jedes Design erstellen
-	$templategroup = array(
-		"prefix" => "designconfigurator",
-		"title" => $db->escape_string("Design Konfigurator"),
-	);
-
-	$db->insert_query("templategroups", $templategroup);
-
-	$insert_array = array(
-		'title' => 'designconfigurator',
-		'template' => $db->escape_string('<html>
-        <head>
-           <title>{$lang->user_cp} - {$lang->designconfigurator_usercp}</title>
-           {$headerinclude}
-        </head>
-        <body>
-           {$header}
-           <table width="100%" border="0" align="center">
-              <tr>
-                 {$usercpnav}
-                 <td valign="top" class="tborder">
-                    <div id="designconfigurator">
-                       <div class="designconfi-headline">{$lang->designconfigurator_usercp}</div>
-                       <div class="designconfi-desc">{$lang->designconfigurator_usercp_desc}</div>
-                       <div class="designconfi-headline">{$lang->designconfigurator_usercp_mode}</div>
-                       <div class="designconfi-mode">
-                          {$lightdarkmode}
-                       </div>
-                       <div class="designconfi-headline">{$lang->designconfigurator_usercp_design}</div>
-                       <div class="designconfi-design">
-                          {$designswitch}
-                       </div>
-                       <div class="designconfi-headline">{$lang->designconfigurator_usercp_accentcolors}</div>
-                       {$accentcolors}
-                    </div>
-                 </td>
-              </tr>
-           </table>
-           {$footer}
-        </body>
-     </html>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_accentcolor',
-		'template' => $db->escape_string('<div class="designconfi-accentcolor">
-        <table>
-           <tbody>
-              <form id="designconfigurator_accentcolor" method="post" action="usercp.php?action=designconfigurator_accentcolor">
-                 {$accentcolors_add}
-                 <tr>
-                    <td align="center" colspan="2">
-                       <input type="hidden" name="action" value="designconfigurator_accentcolor">
-                       <input type="submit" value="{$lang->designconfigurator_accentcolor_button}" name="designconfigurator_accentcolor" class="button">
-                    </td>
-                 </tr>
-              </form>
-           </tbody>
-        </table>
-     </div>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_accentcolor_add',
-		'template' => $db->escape_string('<tr>
-        <td class="trow1" width="40%" align="justify">
-      <strong>{$lang->designconfigurator_accentcolor} {$number}</strong><br>
-      <span class="smalltext">
-         {$lang->designconfigurator_accentcolor_desc}<br>
-         <div style="display: flex;align-items: center;">
-            <div style="height: 11px;width: 10px;background:{$accentcolor};margin-right: 5px;"></div>
-            <div style="color:{$accentcolor};">{$lang->designconfigurator_accentcolor_def} {$number}</div>
-         </div>
-         {$accentcolors_own}
-      </span>
-   </td>
-   <td class="trow1" width="60%">
-      <input type="text" class="textbox" name="accentcolor{$number}" id="accentcolor{$number}" value="{$color_own}" size="40" maxlength="1155">
-   </td>
-
-   </tr>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_accentcolor_none',
-		'template' => $db->escape_string('<div style="text-align:center;margin:10px auto;">{$lang->designconfigurator_accentcolor_none}</div>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_accentcolor_own',
-		'template' => $db->escape_string('<div style="display: flex;align-items: center;">
-    <div style="height: 11px;width: 10px;background:{$color_own};margin-right: 5px;"></div>
-    <div style="color:{$color_own};">{$lang->designconfigurator_accentcolor_own_number} {$number}</div>
-    </div>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_designswitch',
-		'template' => $db->escape_string('<div class="designconfi-header" style="background: linear-gradient(to right, {$designs[\'accentcolor1\']} 50%, {$designs[\'accentcolor2\']} 50%);{$avtive_design}">{$designswitch_link}</div>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_designswitch_active',
-		'template' => $db->escape_string('<img src="{$designs[\'headerimage\']}" class="designconfi-headerimg">
-      <div class="designconfi-headermode" style="background:{$designs[\'accentcolor1\']};color:{$designs[\'accentcolor2\']};">
-         {$mode_option}
-      </div>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_designswitch_link',
-		'template' => $db->escape_string('<a href="usercp.php?action=designconfigurator&designswitch={$designs[\'name\']}">
-       <img src="{$designs[\'headerimage\']}" class="designconfi-headerimg">
-       <div class="designconfi-headermode" style="background:{$designs[\'accentcolor1\']};color:{$designs[\'accentcolor2\']};">
-           {$mode_option}
-       </div>
-   </a>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_designswitch_none',
-		'template' => $db->escape_string('<div style="text-align:center;margin:10px auto;">{$lang->designconfigurator_designswitch_none}</div>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_lightdarkmode',
-		'template' => $db->escape_string('<div class="designconfi-mode_option" {$lightdarkmode_active_light}>{$lightdarkmode_link_light}</div>
-    <div class="designconfi-mode_option" {$lightdarkmode_active_dark}>{$lightdarkmode_link_dark}</div>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_lightdarkmode_none',
-		'template' => $db->escape_string('<div style="text-align:center;margin:10px auto;">{$lang->designconfigurator_lightdarkmode_none}</div>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_switcher_button_guest',
-		'template' => $db->escape_string('<button onclick="dark_mode_{$design_option}()">{$lang->switcher_lightdarkbutton}</button>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_switcher_button_member',
-		'template' => $db->escape_string('<form method="post" action="usercp.php?action=designconfigurator">     
-		<input type="hidden" name="saveurl" value="{$saveurl}" /> 
-		<input type="hidden" value="{$activedimm}" name="indexdimm" class="button">
-		<input type="submit" value="{$lang->switcher_lightdarkbutton}" class="button" name="send_indexdimm">
-	</form>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_switcher_guest_js_accentcolor',
-		'template' => $db->escape_string('<script>
-    function getCookie(k){var v=document.cookie.match(\'(^|;) ?\'+k+\'=([^;]*)(;|$)\');return v?v[2]:null}
-    function dark_mode_accentcolor() {
-        if (getCookie(\'theme_accentcolor\') != "dark_accentcolor") {
-            document.cookie="theme_accentcolor=dark_accentcolor";
-        } else {
-            document.cookie="theme_accentcolor=dark_accentcolor; max-age=0";
-        }
-        location.reload();
-    }
-    </script>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_switcher_guest_js_design',
-		'template' => $db->escape_string('<script>
-    function getCookie(k){var v=document.cookie.match(\'(^|;) ?\'+k+\'=([^;]*)(;|$)\');return v?v[2]:null}
-    function dark_mode_design() {
-        if (getCookie(\'theme_design\') != "dark_design") {
-            document.cookie="theme_design=dark_design";
-        } else {
-            document.cookie="theme_design=dark_design; max-age=0";
-        }
-        location.reload();
-    }
-    </script>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_switcher_guest_js_mode',
-		'template' => $db->escape_string('<script>
-    function getCookie(k){var v=document.cookie.match(\'(^|;) ?\'+k+\'=([^;]*)(;|$)\');return v?v[2]:null}
-    function dark_mode_mode() {
-        if (getCookie(\'theme_mode\') != "dark_mode") {
-            document.cookie="theme_mode=dark_mode";
-        } else {
-            document.cookie="theme_mode=dark_mode; max-age=0";
-        }
-        location.reload();
-    }
-    </script>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-	$insert_array = array(
-		'title' => 'designconfigurator_usercp_nav',
-		'template' => $db->escape_string('<tr>
-	<td class="trow1 smalltext">
-		<a href="usercp.php?action=designconfigurator" class="usercp_nav_item usercp_nav_options">{$lang->designconfigurator_usercpmenu_nav}</a>
-	</td>
-    </tr>'),
-		'sid' => '-2',
-		'version' => '',
-		'dateline' => TIME_NOW
-	);
-	$db->insert_query("templates", $insert_array);
-
-
-    // CSS HINZUFÜGEN
-    require_once MYBB_ADMIN_DIR."inc/functions_themes.php";
-
-    // STYLESHEET HINZUFÜGEN
-    $css = array(
-		'name' => 'designconfigurator.css',
-		'tid' => 1,
-		'attachedto' => '',
-		"stylesheet" =>	'#designconfigurator {
-            width: 100%;
-            box-sizing: border-box;
-            background: #f5f5f5;
-            border: 1px solid;
-            border-color: #fff #ddd #ddd #fff;
-        }
-        
-        #designconfigurator .designconfi-headline {
-            background: #0066a2 url(../../../images/thead.png) top left repeat-x;
-            color: #ffffff;
-            border-bottom: 1px solid #263c30;
-            padding: 8px;
-            -moz-border-radius-topleft: 6px;
-            -moz-border-radius-topright: 6px;
-            -webkit-border-top-left-radius: 6px;
-            -webkit-border-top-right-radius: 6px;
-            border-top-left-radius: 6px;
-            border-top-right-radius: 6px;
-        }
-        
-        #designconfigurator .designconfi-desc {
-            text-align: justify;
-            line-height: 180%;
-            padding: 20px 40px;
-        }
-        
-        #designconfigurator .designconfi-mode {
-            display: flex;
-            gap: 50px;
-            flex-wrap: nowrap;
-            justify-content: center;
-            margin: 10px 0;
-        }
-        
-        #designconfigurator .designconfi-mode .designconfi-mode_option {
-            background: #0f0f0f url(../../../images/tcat.png) repeat-x;
-            color: #fff;
-            border-top: 1px solid #444;
-            border-bottom: 1px solid #000;
-            padding: 6px;
-            font-size: 12px;
-            width: 20%;
-            text-align: center;
-        }
-        
-        #designconfigurator .designconfi-design {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 10px;
-        }
-        
-        #designconfigurator .designconfi-design .designconfi-header {
-            padding: 8px;
-            width: 31%;
-            height: 151px;
-        }
-        
-        #designconfigurator .designconfi-design .designconfi-header .designconfi-headerimg {
-            width: 316px;
-            height: 150px;
-        }
-        
-        #designconfigurator .designconfi-design .designconfi-header .designconfi-headermode {
-            position: relative;
-            top: -90px;
-            text-align: center;
-            padding: 8px;
-            font-weight: bold;
-        }',
-		'cachefile' => $db->escape_string(str_replace('/', '', 'designconfigurator.css')),
-		'lastmodified' => time()
-	);
+    $templategroup = array(
+        "prefix" => "designconfigurator",
+        "title" => $db->escape_string("Design Konfigurator"),
+    );
+    $db->insert_query("templategroups", $templategroup);
+    // Templates 
+    designconfigurator_templates();
     
-    $sid = $db->insert_query("themestylesheets", $css);
-	$db->update_query("themestylesheets", array("cachefile" => "designconfigurator.css"), "sid = '".$sid."'", 1);
-
-	$tids = $db->simple_select("themes", "tid");
-	while($theme = $db->fetch_array($tids)) {
-		update_theme_stylesheet_list($theme['tid']);
-	}
+    // STYLESHEET HINZUFÜGEN
+	require_once MYBB_ADMIN_DIR."inc/functions_themes.php";
+    // Funktion
+    $stylesheet = designconfigurator_stylesheet();
+    $sid = $db->insert_query('themestylesheets', $stylesheet);
+    cache_stylesheet(1, "designconfigurator.css", $stylesheet['stylesheet']);
+    update_theme_stylesheet_list("1");
 }
 
 // Funktion zur Überprüfung des Installationsstatus; liefert true zurürck, wenn Plugin installiert, sonst false (optional).
@@ -530,11 +163,172 @@ function designconfigurator_deactivate() {
 	}
 }
 
-##############################
-### FUNKTIONEN - THE MAGIC ###
-##############################
+######################
+### HOOK FUNCTIONS ###
+######################
 
 // ADMIN-CP
+
+// Stylesheet zum Master Style hinzufügen
+function designconfigurator_admin_update_stylesheet(&$table) {
+
+    global $db, $mybb, $lang;
+	
+    $lang->load('rpgstuff_stylesheet_updates');
+
+    require_once MYBB_ADMIN_DIR."inc/functions_themes.php";
+
+    // HINZUFÜGEN
+    if ($mybb->input['action'] == 'add_master' AND $mybb->get_input('plugin') == "designconfigurator") {
+
+        $css = designconfigurator_stylesheet();
+        
+        $sid = $db->insert_query("themestylesheets", $css);
+        $db->update_query("themestylesheets", array("cachefile" => "designconfigurator.css"), "sid = '".$sid."'", 1);
+    
+        $tids = $db->simple_select("themes", "tid");
+        while($theme = $db->fetch_array($tids)) {
+            update_theme_stylesheet_list($theme['tid']);
+        } 
+
+        flash_message($lang->stylesheets_flash, "success");
+        admin_redirect("index.php?module=rpgstuff-stylesheet_updates");
+    }
+
+    // Zelle mit dem Namen des Themes
+    $table->construct_cell("<b>".htmlspecialchars_uni("Design Konfigurator")."</b>", array('width' => '70%'));
+
+    // Ob im Master Style vorhanden
+    $master_check = $db->fetch_field($db->query("SELECT tid FROM ".TABLE_PREFIX."themestylesheets 
+    WHERE name = 'designconfigurator.css' 
+    AND tid = 1
+    "), "tid");
+    
+    if (!empty($master_check)) {
+        $masterstyle = true;
+    } else {
+        $masterstyle = false;
+    }
+
+    if (!empty($masterstyle)) {
+        $table->construct_cell($lang->stylesheets_masterstyle, array('class' => 'align_center'));
+    } else {
+        $table->construct_cell("<a href=\"index.php?module=rpgstuff-stylesheet_updates&action=add_master&plugin=designconfigurator\">".$lang->stylesheets_add."</a>", array('class' => 'align_center'));
+    }
+    
+    $table->construct_row();
+}
+
+// Plugin Update
+function designconfigurator_admin_update_plugin(&$table) {
+
+    global $db, $mybb, $lang;
+	
+    $lang->load('rpgstuff_plugin_updates');
+
+    // UPDATE
+    if ($mybb->input['action'] == 'add_update' AND $mybb->get_input('plugin') == "designconfigurator") {
+
+        // Templates 
+        designconfigurator_templates('update');
+
+        // Stylesheet
+        $update_data = designconfigurator_stylesheet_update();
+        $update_stylesheet = $update_data['stylesheet'];
+        $update_string = $update_data['update_string'];
+        if (!empty($update_string)) {
+
+            // Ob im Master Style die Überprüfung vorhanden ist
+            $masterstylesheet = $db->fetch_field($db->query("SELECT stylesheet FROM ".TABLE_PREFIX."themestylesheets WHERE tid = 1 AND name = 'designconfigurator.css'"), "stylesheet");
+            $masterstylesheet = (string)($masterstylesheet ?? '');
+            $update_string = (string)($update_string ?? '');
+            $pos = strpos($masterstylesheet, $update_string);
+            if ($pos === false) { // nicht vorhanden 
+            
+                $theme_query = $db->simple_select('themes', 'tid, name');
+                while ($theme = $db->fetch_array($theme_query)) {
+        
+                    $stylesheet_query = $db->simple_select("themestylesheets", "*", "name='".$db->escape_string('designconfigurator.css')."' AND tid = ".$theme['tid']);
+                    $stylesheet = $db->fetch_array($stylesheet_query);
+        
+                    if ($stylesheet) {
+
+                        require_once MYBB_ADMIN_DIR."inc/functions_themes.php";
+        
+                        $sid = $stylesheet['sid'];
+            
+                        $updated_stylesheet = array(
+                            "cachefile" => $db->escape_string($stylesheet['name']),
+                            "stylesheet" => $db->escape_string($stylesheet['stylesheet']."\n\n".$update_stylesheet),
+                            "lastmodified" => TIME_NOW
+                        );
+            
+                        $db->update_query("themestylesheets", $updated_stylesheet, "sid='".$sid."'");
+            
+                        if(!cache_stylesheet($theme['tid'], $stylesheet['name'], $updated_stylesheet['stylesheet'])) {
+                            $db->update_query("themestylesheets", array('cachefile' => "css.php?stylesheet=".$sid), "sid='".$sid."'", 1);
+                        }
+            
+                        update_theme_stylesheet_list($theme['tid']);
+                    }
+                }
+            } 
+        }
+
+        // Datenbanktabellen & Felder
+        designconfigurator_database();
+
+        // Collation prüfen und korrigieren
+        $charset = 'utf8mb4';
+        $collation = 'utf8mb4_unicode_ci';
+
+        $collation_string = $db->build_create_table_collation();
+        if (preg_match('/CHARACTER SET ([^\s]+)\s+COLLATE ([^\s]+)/i', $collation_string, $matches)) {
+            $charset = $matches[1];
+            $collation = $matches[2];
+        }
+
+        $databaseTables = [
+            "designs",
+            "designs_users"
+        ];
+
+        foreach ($databaseTables as $databaseTable) {
+            if ($db->table_exists($databaseTable)) {
+                $table = TABLE_PREFIX.$databaseTable;
+
+                $query = $db->query("SHOW TABLE STATUS LIKE '".$db->escape_string($table)."'");
+                $table_status = $db->fetch_array($query);
+                $actual_collation = strtolower($table_status['Collation'] ?? '');
+
+                $actual_collation = str_replace('utf8mb3', 'utf8', $actual_collation);
+                $expected_collation = str_replace('utf8mb3', 'utf8', $collation);
+
+                if (!empty($collation) && $actual_collation !== $expected_collation) {
+                    $db->query("ALTER TABLE {$table} CONVERT TO CHARACTER SET {$charset} COLLATE {$collation}");
+                }
+            }
+        }
+
+        flash_message($lang->plugins_flash, "success");
+        admin_redirect("index.php?module=rpgstuff-plugin_updates");
+    }
+
+    // Zelle mit dem Namen des Themes
+    $table->construct_cell("<b>".htmlspecialchars_uni("Design Konfigurator")."</b>", array('width' => '70%'));
+
+    // Überprüfen, ob Update erledigt
+    $update_check = designconfigurator_is_updated();
+
+    if (!empty($update_check)) {
+        $table->construct_cell($lang->plugins_actual, array('class' => 'align_center'));
+    } else {
+        $table->construct_cell("<a href=\"index.php?module=rpgstuff-plugin_updates&action=add_update&plugin=designconfigurator\">".$lang->plugins_update."</a>", array('class' => 'align_center'));
+    }
+    
+    $table->construct_row();
+}
+
 // action handler fürs acp konfigurieren
 function designconfigurator_admin_style_action_handler(&$actions) {
 	$actions['designconfigurator'] = array('active' => 'designconfigurator', 'file' => 'designconfigurator');
@@ -4188,4 +3982,481 @@ function designconfigurator_misc() {
 
 	}
 
+}
+
+#########################################
+### DATABASE | TEMPLATES | STYLESHEET ###
+#########################################
+
+// DATENBANKTABELLEN
+function designconfigurator_database() {
+
+    global $db;
+	
+	// die einzelnen Designs
+    if (!$db->table_exists("designs")) {
+        $db->query("CREATE TABLE ".TABLE_PREFIX."designs(
+            `did` int(10) NOT NULL AUTO_INCREMENT,
+			`tid` int(10) NOT NULL,
+			`name` varchar(500) COLLATE utf8_general_ci NOT NULL,
+			`standard` int(1) NOT NULL DEFAULT 0,
+			`root` varchar(10) COLLATE utf8_general_ci NOT NULL,
+			`headerimage` varchar(500) COLLATE utf8_general_ci NOT NULL,
+			`accentcolor1` varchar(10) COLLATE utf8_general_ci NOT NULL,
+			`accentcolor2` varchar(10) COLLATE utf8_general_ci NOT NULL,
+			`light_root` longtext COLLATE utf8_general_ci NOT NULL,
+			`dark_root` longtext COLLATE utf8_general_ci NOT NULL,
+			`path` varchar(500) COLLATE utf8_general_ci NOT NULL,
+			`individual_colors` varchar(500) COLLATE utf8_general_ci NOT NULL,
+			`allowed_usergroups` varchar(500) COLLATE utf8_general_ci NOT NULL,
+			PRIMARY KEY(`did`),
+			KEY `did` (`did`)
+			)
+			ENGINE=InnoDB ".$db->build_create_table_collation().";
+		");
+    }
+	
+	// User Daten
+    if (!$db->table_exists("designs_users")) {
+        $db->query("CREATE TABLE ".TABLE_PREFIX."designs_users(
+            `duid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+			`uid` int(10) unsigned NOT NULL,
+			`style` int(10) unsigned NOT NULL,
+			`designname` varchar(500) COLLATE utf8_general_ci NOT NULL,
+			`designdimm` varchar(1) COLLATE utf8_general_ci NOT NULL,
+			`individual_colors` varchar(500) COLLATE utf8_general_ci NOT NULL,
+			PRIMARY KEY(`duid`),
+			KEY `duid` (`duid`)
+			)
+			ENGINE=InnoDB ".$db->build_create_table_collation().";
+		");
+    }
+}
+
+// TEMPLATES
+function designconfigurator_templates($mode = '') {
+
+    global $db;
+
+	$templates[] = array(
+		'title' => 'designconfigurator',
+		'template' => $db->escape_string('<html>
+        <head>
+           <title>{$lang->user_cp} - {$lang->designconfigurator_usercp}</title>
+           {$headerinclude}
+        </head>
+        <body>
+           {$header}
+           <table width="100%" border="0" align="center">
+              <tr>
+                 {$usercpnav}
+                 <td valign="top" class="tborder">
+                    <div id="designconfigurator">
+                       <div class="designconfi-headline">{$lang->designconfigurator_usercp}</div>
+                       <div class="designconfi-desc">{$lang->designconfigurator_usercp_desc}</div>
+                       <div class="designconfi-headline">{$lang->designconfigurator_usercp_mode}</div>
+                       <div class="designconfi-mode">
+                          {$lightdarkmode}
+                       </div>
+                       <div class="designconfi-headline">{$lang->designconfigurator_usercp_design}</div>
+                       <div class="designconfi-design">
+                          {$designswitch}
+                       </div>
+                       <div class="designconfi-headline">{$lang->designconfigurator_usercp_accentcolors}</div>
+                       {$accentcolors}
+                    </div>
+                 </td>
+              </tr>
+           </table>
+           {$footer}
+        </body>
+     </html>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+
+	$templates[] = array(
+		'title' => 'designconfigurator_accentcolor',
+		'template' => $db->escape_string('<div class="designconfi-accentcolor">
+        <table>
+           <tbody>
+              <form id="designconfigurator_accentcolor" method="post" action="usercp.php?action=designconfigurator_accentcolor">
+                 {$accentcolors_add}
+                 <tr>
+                    <td align="center" colspan="2">
+                       <input type="hidden" name="action" value="designconfigurator_accentcolor">
+                       <input type="submit" value="{$lang->designconfigurator_accentcolor_button}" name="designconfigurator_accentcolor" class="button">
+                    </td>
+                 </tr>
+              </form>
+           </tbody>
+        </table>
+     </div>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+	
+	$templates[] = array(
+		'title' => 'designconfigurator_accentcolor_add',
+		'template' => $db->escape_string('<tr>
+        <td class="trow1" width="40%" align="justify">
+      <strong>{$lang->designconfigurator_accentcolor} {$number}</strong><br>
+      <span class="smalltext">
+         {$lang->designconfigurator_accentcolor_desc}<br>
+         <div style="display: flex;align-items: center;">
+            <div style="height: 11px;width: 10px;background:{$accentcolor};margin-right: 5px;"></div>
+            <div style="color:{$accentcolor};">{$lang->designconfigurator_accentcolor_def} {$number}</div>
+         </div>
+         {$accentcolors_own}
+      </span>
+	  </td>
+	  <td class="trow1" width="60%">
+      <input type="text" class="textbox" name="accentcolor{$number}" id="accentcolor{$number}" value="{$color_own}" size="40" maxlength="1155">
+	  </td>
+	  </tr>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);	
+
+	$templates[] = array(
+		'title' => 'designconfigurator_accentcolor_none',
+		'template' => $db->escape_string('<div style="text-align:center;margin:10px auto;">{$lang->designconfigurator_accentcolor_none}</div>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+
+	$templates[] = array(
+		'title' => 'designconfigurator_accentcolor_own',
+		'template' => $db->escape_string('<div style="display: flex;align-items: center;">
+		<div style="height: 11px;width: 10px;background:{$color_own};margin-right: 5px;"></div>
+		<div style="color:{$color_own};">{$lang->designconfigurator_accentcolor_own_number} {$number}</div>
+		</div>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+
+	$templates[] = array(
+		'title' => 'designconfigurator_designswitch',
+		'template' => $db->escape_string('<div class="designconfi-header" style="background: linear-gradient(to right, {$designs[\'accentcolor1\']} 50%, {$designs[\'accentcolor2\']} 50%);{$avtive_design}">{$designswitch_link}</div>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+	
+	$templates[] = array(
+		'title' => 'designconfigurator_designswitch_active',
+		'template' => $db->escape_string('<img src="{$designs[\'headerimage\']}" class="designconfi-headerimg">
+		<div class="designconfi-headermode" style="background:{$designs[\'accentcolor1\']};color:{$designs[\'accentcolor2\']};">
+         {$mode_option}
+		 </div>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+	
+	$templates[] = array(
+		'title' => 'designconfigurator_designswitch_link',
+		'template' => $db->escape_string('<a href="usercp.php?action=designconfigurator&designswitch={$designs[\'name\']}">
+       <img src="{$designs[\'headerimage\']}" class="designconfi-headerimg">
+       <div class="designconfi-headermode" style="background:{$designs[\'accentcolor1\']};color:{$designs[\'accentcolor2\']};">
+           {$mode_option}
+       </div>
+	   </a>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+	
+	$templates[] = array(
+		'title' => 'designconfigurator_designswitch_none',
+		'template' => $db->escape_string('<div style="text-align:center;margin:10px auto;">{$lang->designconfigurator_designswitch_none}</div>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+	
+	$templates[] = array(
+		'title' => 'designconfigurator_lightdarkmode',
+		'template' => $db->escape_string('<div class="designconfi-mode_option" {$lightdarkmode_active_light}>{$lightdarkmode_link_light}</div>
+		<div class="designconfi-mode_option" {$lightdarkmode_active_dark}>{$lightdarkmode_link_dark}</div>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+	
+	$templates[] = array(
+		'title' => 'designconfigurator_lightdarkmode_none',
+		'template' => $db->escape_string('<div style="text-align:center;margin:10px auto;">{$lang->designconfigurator_lightdarkmode_none}</div>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+	
+	$templates[] = array(
+		'title' => 'designconfigurator_switcher_button_guest',
+		'template' => $db->escape_string('<button onclick="dark_mode_{$design_option}()">{$lang->switcher_lightdarkbutton}</button>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+	
+	$templates[] = array(
+		'title' => 'designconfigurator_switcher_button_member',
+		'template' => $db->escape_string('<form method="post" action="usercp.php?action=designconfigurator">     
+		<input type="hidden" name="saveurl" value="{$saveurl}" /> 
+		<input type="hidden" value="{$activedimm}" name="indexdimm" class="button">
+		<input type="submit" value="{$lang->switcher_lightdarkbutton}" class="button" name="send_indexdimm">
+		</form>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+	
+	$templates[] = array(
+		'title' => 'designconfigurator_switcher_guest_js_accentcolor',
+		'template' => $db->escape_string('<script>
+		function getCookie(k){var v=document.cookie.match(\'(^|;) ?\'+k+\'=([^;]*)(;|$)\');return v?v[2]:null}
+		function dark_mode_accentcolor() {
+        if (getCookie(\'theme_accentcolor\') != "dark_accentcolor") {
+            document.cookie="theme_accentcolor=dark_accentcolor";
+        } else {
+            document.cookie="theme_accentcolor=dark_accentcolor; max-age=0";
+        }
+        location.reload();
+		}
+		</script>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+	
+	$templates[] = array(
+		'title' => 'designconfigurator_switcher_guest_js_design',
+		'template' => $db->escape_string('<script>
+		function getCookie(k){var v=document.cookie.match(\'(^|;) ?\'+k+\'=([^;]*)(;|$)\');return v?v[2]:null}
+		function dark_mode_design() {
+        if (getCookie(\'theme_design\') != "dark_design") {
+            document.cookie="theme_design=dark_design";
+        } else {
+            document.cookie="theme_design=dark_design; max-age=0";
+        }
+        location.reload();
+		}
+		</script>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+
+	$templates[] = array(
+		'title' => 'designconfigurator_switcher_guest_js_mode',
+		'template' => $db->escape_string('<script>
+		function getCookie(k){var v=document.cookie.match(\'(^|;) ?\'+k+\'=([^;]*)(;|$)\');return v?v[2]:null}
+		function dark_mode_mode() {
+        if (getCookie(\'theme_mode\') != "dark_mode") {
+            document.cookie="theme_mode=dark_mode";
+        } else {
+            document.cookie="theme_mode=dark_mode; max-age=0";
+        }
+        location.reload();
+		}
+		</script>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+
+	$templates[] = array(
+		'title' => 'designconfigurator_usercp_nav',
+		'template' => $db->escape_string('<tr>
+		<td class="trow1 smalltext">
+		<a href="usercp.php?action=designconfigurator" class="usercp_nav_item usercp_nav_options">{$lang->designconfigurator_usercpmenu_nav}</a>
+		</td>
+		</tr>'),
+		'sid' => '-2',
+		'version' => '',
+		'dateline' => TIME_NOW
+	);
+
+    if ($mode == "update") {
+
+        foreach ($templates as $template) {
+            $query = $db->simple_select("templates", "tid, template", "title = '".$template['title']."' AND sid = '-2'");
+            $existing_template = $db->fetch_array($query);
+
+            if($existing_template) {
+                if ($existing_template['template'] !== $template['template']) {
+                    $db->update_query("templates", array(
+                        'template' => $template['template'],
+                        'dateline' => TIME_NOW
+                    ), "tid = '".$existing_template['tid']."'");
+                }
+            }   
+            else {
+                $db->insert_query("templates", $template);
+            }
+        }
+        
+	
+    } else {
+        foreach ($templates as $template) {
+            $check = $db->num_rows($db->simple_select("templates", "title", "title = '".$template['title']."'"));
+            if ($check == 0) {
+                $db->insert_query("templates", $template);
+            }
+        }
+    }
+}
+
+// STYLESHEET MASTER
+function designconfigurator_stylesheet() {
+
+    global $db;
+
+	$css = array(
+		'name' => 'designconfigurator.css',
+		'tid' => 1,
+		'attachedto' => '',
+		'stylesheet' =>	'#designconfigurator {
+            width: 100%;
+            box-sizing: border-box;
+            background: #f5f5f5;
+            border: 1px solid;
+            border-color: #fff #ddd #ddd #fff;
+        }
+        
+        #designconfigurator .designconfi-headline {
+            background: #0066a2 url(../../../images/thead.png) top left repeat-x;
+            color: #ffffff;
+            border-bottom: 1px solid #263c30;
+            padding: 8px;
+            -moz-border-radius-topleft: 6px;
+            -moz-border-radius-topright: 6px;
+            -webkit-border-top-left-radius: 6px;
+            -webkit-border-top-right-radius: 6px;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+        }
+        
+        #designconfigurator .designconfi-desc {
+            text-align: justify;
+            line-height: 180%;
+            padding: 20px 40px;
+        }
+        
+        #designconfigurator .designconfi-mode {
+            display: flex;
+            gap: 50px;
+            flex-wrap: nowrap;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        
+        #designconfigurator .designconfi-mode .designconfi-mode_option {
+            background: #0f0f0f url(../../../images/tcat.png) repeat-x;
+            color: #fff;
+            border-top: 1px solid #444;
+            border-bottom: 1px solid #000;
+            padding: 6px;
+            font-size: 12px;
+            width: 20%;
+            text-align: center;
+        }
+        
+        #designconfigurator .designconfi-design {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px;
+        }
+        
+        #designconfigurator .designconfi-design .designconfi-header {
+            padding: 8px;
+            width: 31%;
+            height: 151px;
+        }
+        
+        #designconfigurator .designconfi-design .designconfi-header .designconfi-headerimg {
+            width: 316px;
+            height: 150px;
+        }
+        
+        #designconfigurator .designconfi-design .designconfi-header .designconfi-headermode {
+            position: relative;
+            top: -90px;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+        }',
+		'cachefile' => $db->escape_string(str_replace('/', '', 'designconfigurator.css')),
+		'lastmodified' => TIME_NOW
+	);
+
+    return $css;
+}
+
+// STYLESHEET UPDATE
+function designconfigurator_stylesheet_update() {
+
+    // Update-Stylesheet
+    // wird an bestehende Stylesheets immer ganz am ende hinzugefügt
+    $update = '';
+
+    // Definiere den  Überprüfung-String (muss spezifisch für die Überprüfung sein)
+    $update_string = '';
+
+    return array(
+        'stylesheet' => $update,
+        'update_string' => $update_string
+    );
+}
+
+// UPDATE CHECK
+function designconfigurator_is_updated() {
+    global $db;
+
+    $charset = 'utf8';
+    $collation = 'utf8_general_ci';
+
+    $collation_string = $db->build_create_table_collation();
+    if (preg_match('/CHARACTER SET ([^\s]+)\s+COLLATE ([^\s]+)/i', $collation_string, $matches)) {
+        $charset = strtolower($matches[1]);
+        $collation = strtolower($matches[2]);
+    }
+
+    $databaseTables = [
+        "designs",
+        "designs_users"
+    ];
+
+    foreach ($databaseTables as $table_name) {
+        if (!$db->table_exists($table_name)) {
+            return false;
+        }
+
+        $full_table_name = TABLE_PREFIX . $table_name;
+
+        $query = $db->query("
+            SELECT TABLE_COLLATION 
+            FROM information_schema.TABLES 
+            WHERE LOWER(TABLE_SCHEMA) = LOWER(DATABASE()) 
+              AND TABLE_NAME = '".$db->escape_string($full_table_name)."'
+        ");
+        $result = $db->fetch_array($query);
+        $actual_collation = strtolower(trim($result['TABLE_COLLATION'] ?? ''));
+        
+        $actual_collation = str_replace(['utf8mb3', 'utf8mb4'], 'utf8', $actual_collation);
+        $expected_collation = str_replace(['utf8mb3', 'utf8mb4'], 'utf8', $collation);
+
+        if ($actual_collation !== $expected_collation) {
+            return false;
+        }
+    }
+
+    return true;
 }
