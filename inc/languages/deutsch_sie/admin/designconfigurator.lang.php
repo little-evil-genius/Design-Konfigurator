@@ -1,4 +1,5 @@
 <?php
+$l['designconfigurator_error_rpgstuff'] = "Das ACP Modul <a href=\"https://github.com/little-evil-genius/rpgstuff_modul\" target=\"_blank\">\"RPG Stuff\"</a> muss vorhanden sein!";
 // Admin Rechte
 $l['designconfigurator_permission'] = "Kann den Inhalt des Design-Konfigurators verwalten?";
 // Design-Konfigurator
